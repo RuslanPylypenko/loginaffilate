@@ -44,9 +44,14 @@ RUN pecl install redis-5.1.1 && \
 
 # Other PHP7 Extensions
 
+RUN apt-get update
+
+RUN apt-get install -y libpq-dev \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pgsql
+
 RUN docker-php-ext-install pdo_mysql && \
     docker-php-ext-install pdo_sqlite && \
-    docker-php-ext-install mysqli && \
     docker-php-ext-install curl && \
     docker-php-ext-install tokenizer && \
     docker-php-ext-install json && \
