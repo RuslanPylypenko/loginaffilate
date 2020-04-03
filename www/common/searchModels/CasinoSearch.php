@@ -2,6 +2,8 @@
 
 namespace common\searchModels;
 
+use common\helpers\CasinoHelper;
+use shop\helpers\ProductHelper;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Casino;
@@ -69,5 +71,13 @@ class CasinoSearch extends Casino
             ->andFilterWhere(['ilike', 'description', $this->description]);
 
         return $dataProvider;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function statusList()
+    {
+        return CasinoHelper::statusList();
     }
 }

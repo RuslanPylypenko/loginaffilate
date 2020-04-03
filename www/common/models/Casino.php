@@ -59,12 +59,50 @@ class Casino extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
+            'title' => 'Название',
             'country_id' => 'Country ID',
-            'logo' => 'Logo',
-            'background' => 'Background',
-            'website' => 'Website',
-            'description' => 'Description',
+            'logo' => 'Лого',
+            'background' => 'Подложка',
+            'website' => 'Сайт казино',
+            'description' => 'Описание',
+            'status' => 'Черновик',
+            'url' => 'Ссылка',
+            'rating' => 'Рейтинг',
         ];
     }
+
+    public function isActive()
+    {
+        return $this->status == self::STATUS_ACTIVE;
+    }
+
+
+    public function isDraft()
+    {
+        return $this->status == self::STATUS_DRAFT;
+    }
+
+    public function activate()
+    {
+        if ($this->isActive()) {
+            throw new \DomainException('Casino is already active.');
+        }
+        $this->status = self::STATUS_ACTIVE;
+    }
+
+    public function draft()
+    {
+        if ($this->isDraft()) {
+            throw new \DomainException('Casino is already draft.');
+        }
+        $this->status = self::STATUS_DRAFT;
+    }
+
+
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
+
+
 }

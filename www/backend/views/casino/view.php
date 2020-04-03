@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\CasinoHelper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -16,8 +17,21 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+
+        <?php if ($model->isActive()): ?>
+            <?= Html::a('В черновик', ['draft', 'id' => $model->id], ['class' => 'btn btn-warning', 'data-method' => 'post']) ?>
+        <?php else: ?>
+            <?= Html::a('Активировать ', ['activate', 'id' => $model->id], ['class' => 'btn btn-success', 'data-method' => 'post']) ?>
+        <?php endif; ?>
+
+        <?= Html::a('Изменить рейтинг', ['update', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('Добавить в топ', ['update', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('Редактировать урл', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('Бонусы казино', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('Отзывы казино', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
+
+        <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -29,14 +43,21 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             'title',
-            'country_id',
+            'url',
+            'rating',
             'logo',
             'background',
             'website',
             'description:ntext',
+            [
+                'attribute' => 'status',
+                'value' => CasinoHelper::statusLabel($model->status),
+                'format' => 'raw',
+            ],
         ],
     ]) ?>
-
+    <?php if ($model->isActive()): ?>
+        <?= Html::a('Посмотреть на сайте', ['update', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
+    <?php endif; ?>
 </div>

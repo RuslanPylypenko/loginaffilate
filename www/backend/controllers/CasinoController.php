@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\forms\CreateCasinoForm;
+use backend\forms\UpdateUrlForm;
 use common\services\CasinoService;
 use Yii;
 use common\models\Casino;
@@ -97,7 +98,9 @@ class CasinoController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $casino = $this->findModel($id);
+
+        $model = new CreateCasinoForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -109,11 +112,61 @@ class CasinoController extends Controller
     }
 
     /**
-     * Deletes an existing Casino model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionActivate($id)
+    {
+        try {
+            $this->casinoService->activate($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateUrl($id)
+    {
+        $casino = $this->findModel($id);
+        $updateUrlForm = new UpdateUrlForm(['casinoId' => $casino->id, 'url' => $casino->url]);
+
+        if ($updateUrlForm->load(Yii::$app->request->post()) && $updateUrlForm->validate()) {
+            $this->casinoService->updateUrl($updateUrlForm);
+            return $this->redirect(['view', 'id' => $updateUrlForm->casinoId]);
+        }
+
+        return $this->render('update-url', [
+            'updateUrlForm' => $updateUrlForm,
+            'model' => $casino,
+        ]);
+    }
+
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDraft($id)
+    {
+        try {
+            $this->casinoService->draft($id);
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
