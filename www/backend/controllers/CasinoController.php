@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\forms\CreateCasinoForm;
+use backend\forms\UpdateCasinoForm;
 use backend\forms\UpdateUrlForm;
 use common\services\CasinoService;
 use Yii;
@@ -76,16 +77,16 @@ class CasinoController extends Controller
      */
     public function actionCreate()
     {
-        $createCasinoForm = new CreateCasinoForm();
+        $form = new CreateCasinoForm();
 
-        if ($createCasinoForm->load(Yii::$app->request->post()) && $createCasinoForm->validate()) {
-            $casino = $this->casinoService->createCasino($createCasinoForm);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            $casino = $this->casinoService->createCasino($form);
             $casino->save();
             return $this->redirect(['view', 'id' => $casino->id]);
         }
 
         return $this->render('create', [
-            'createCasinoForm' => $createCasinoForm,
+            'model' => $form,
         ]);
     }
 
@@ -100,14 +101,15 @@ class CasinoController extends Controller
     {
         $casino = $this->findModel($id);
 
-        $model = new CreateCasinoForm();
+        $form = new UpdateCasinoForm($casino->attributes);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            return $this->redirect(['view', 'id' => $form->id]);
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'model' => $form,
+            'casino' => $casino,
         ]);
     }
 

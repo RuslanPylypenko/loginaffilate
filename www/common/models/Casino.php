@@ -65,7 +65,7 @@ class Casino extends \yii\db\ActiveRecord
             'background' => 'Подложка',
             'website' => 'Сайт казино',
             'description' => 'Описание',
-            'status' => 'Черновик',
+            'status' => 'Статус',
             'url' => 'Ссылка',
             'rating' => 'Рейтинг',
         ];
