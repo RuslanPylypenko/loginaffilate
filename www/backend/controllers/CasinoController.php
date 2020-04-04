@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\forms\CreateCasinoForm;
+use backend\forms\SetRatingForm;
 use backend\forms\UpdateCasinoForm;
 use backend\forms\UpdateUrlForm;
 use common\services\CasinoService;
@@ -37,6 +38,9 @@ class CasinoController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'activate' => ['POST'],
+                    'draft' => ['POST'],
+                    'add-to-top-list' => ['POST'],
                 ],
             ],
         ];
@@ -80,6 +84,9 @@ class CasinoController extends Controller
         $form = new CreateCasinoForm();
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+
+           // var_dump($form); die();
+
             $casino = $this->casinoService->createCasino($form);
             $casino->save();
             return $this->redirect(['view', 'id' => $casino->id]);
@@ -124,29 +131,7 @@ class CasinoController extends Controller
         } catch (\DomainException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
         }
-        return $this->redirect(['view', 'id' => $id]);
-    }
-
-
-    /**
-     * @param $id
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException
-     */
-    public function actionUpdateUrl($id)
-    {
-        $casino = $this->findModel($id);
-        $updateUrlForm = new UpdateUrlForm(['casinoId' => $casino->id, 'url' => $casino->url]);
-
-        if ($updateUrlForm->load(Yii::$app->request->post()) && $updateUrlForm->validate()) {
-            $this->casinoService->updateUrl($updateUrlForm);
-            return $this->redirect(['view', 'id' => $updateUrlForm->casinoId]);
-        }
-
-        return $this->render('update-url', [
-            'updateUrlForm' => $updateUrlForm,
-            'model' => $casino,
-        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: (['view', 'id' => $id]));
     }
 
     /**
@@ -160,8 +145,81 @@ class CasinoController extends Controller
         } catch (\DomainException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
         }
-        return $this->redirect(['view', 'id' => $id]);
+        return $this->redirect(Yii::$app->request->referrer ?: (['view', 'id' => $id]));
     }
+
+
+    /**
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionAddToTopList($id)
+    {
+        try {
+            $this->casinoService->addToTopList($id);
+            Yii::$app->session->setFlash('success', "Казино добавлено в топ");
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(Yii::$app->request->referrer ?: (['view', 'id' => $id]));
+    }
+
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateUrl($id)
+    {
+        $casino = $this->findModel($id);
+        $updateUrlForm = new UpdateUrlForm(['casinoId' => $casino->id, 'url' => $casino->url]);
+
+        if ($updateUrlForm->load(Yii::$app->request->post()) && $updateUrlForm->validate()) {
+
+            try {
+                $this->casinoService->updateUrl($updateUrlForm);
+            } catch (\DomainException $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+            Yii::$app->session->setFlash('success', 'Url успешно обновлен');
+
+            return $this->redirect(['view', 'id' => $updateUrlForm->casinoId]);
+        }
+
+        return $this->render('update-url', [
+            'updateUrlForm' => $updateUrlForm,
+            'model' => $casino,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateRating($id)
+    {
+        $casino = $this->findModel($id);
+        $updateRatingForm = new SetRatingForm(['casinoId' => $casino->id, 'rating' => $casino->rating]);
+
+        if ($updateRatingForm->load(Yii::$app->request->post()) && $updateRatingForm->validate()) {
+
+            try {
+                $this->casinoService->setRating($updateRatingForm);
+            } catch (\DomainException $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
+            Yii::$app->session->setFlash('success', 'Рейтинг успешно обновлен');
+
+            return $this->redirect(['view', 'id' => $updateRatingForm->casinoId]);
+        }
+
+        return $this->render('update-rating', [
+            'updateRatingForm' => $updateRatingForm,
+            'model' => $casino,
+        ]);
+    }
+
 
     /**
      * @param $id

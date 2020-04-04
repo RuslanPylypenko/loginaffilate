@@ -5,9 +5,9 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Casino */
-/* @var $updateUrlForm \backend\forms\UpdateUrlForm */
+/* @var $updateRatingForm \backend\forms\SetRatingForm */
 
-$this->title = 'Изменить Url казино: ' . $model->title;
+$this->title = 'Изменение рейтинга казино: ' . $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Casinos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
@@ -18,8 +18,8 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= Html::activeHiddenInput($updateUrlForm, 'casinoId'); ?>
-    <?= $form->field($updateUrlForm, 'url')->textInput(['maxlength' => true]) ?>
+    <?= Html::activeHiddenInput($updateRatingForm, 'casinoId'); ?>
+    <?= $form->field($updateRatingForm, 'rating')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group text-right">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

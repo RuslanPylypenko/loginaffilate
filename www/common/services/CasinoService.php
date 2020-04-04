@@ -3,36 +3,57 @@
 namespace common\services;
 
 use backend\forms\CreateCasinoForm;
+use backend\forms\SetRatingForm;
 use backend\forms\UpdateUrlForm;
 use common\models\Casino;
+use common\models\License;
 use common\repositories\CasinoRepository;
+use common\repositories\LicenseRepository;
 
 class CasinoService
 {
     private $casinos;
+    private $licenses;
+    private $transaction;
 
-    public function __construct(CasinoRepository $casinos)
+    public function __construct(
+        CasinoRepository $casinos,
+        LicenseRepository $licenses,
+        TransactionManager $transaction
+    )
     {
         $this->casinos = $casinos;
+        $this->licenses = $licenses;
+        $this->transaction = $transaction;
     }
 
-    /**
-     * @param CreateCasinoForm $casinoForm
-     * @return Casino
-     */
-    public function createCasino(CreateCasinoForm $casinoForm)
+
+    public function createCasino(CreateCasinoForm $form): Casino
     {
-        $casino = new Casino();
-        $casino->title = $casinoForm->title;
-        $casino->country_id = 1;
-        $casino->logo = 'logo';
-        $casino->background = 'background';
-        $casino->description = $casinoForm->description;
-        $casino->website = $casinoForm->website;
-        $casino->status = Casino::STATUS_DRAFT;
+        $casino = Casino::create(
+            $form->title,
+            $form->description,
+            $form->website
+        );
+        foreach ($form->licenses->existing as $licenseId) {
+            $license = $this->licenses->get($licenseId);
+            $casino->assignLicense($license->id);
+        }
+
+        $this->transaction->wrap(function () use ($casino, $form) {
+            foreach ($form->licenses->newNames as $licenseName) {
+                if (!$license = $this->licenses->findByName($licenseName)) {
+                    $license = License::create($licenseName);
+                    $this->licenses->save($license);
+                }
+                $casino->assignLicense($license->id);
+            }
+            $this->licenses->save($license);
+        });
 
         return $casino;
     }
+
 
     public function activate($id)
     {
@@ -53,6 +74,18 @@ class CasinoService
         $casino = $this->casinos->get($updateUrlForm->casinoId);
         $casino->setUrl($updateUrlForm->url);
         $this->casinos->save($casino);
+    }
+
+    public function setRating(SetRatingForm $setRatingForm)
+    {
+        $casino = $this->casinos->get($setRatingForm->casinoId);
+        $casino->setRating($setRatingForm->rating);
+        $this->casinos->save($casino);
+    }
+
+    public function addToTopList($id)
+    {
+
     }
 
 }

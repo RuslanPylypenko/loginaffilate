@@ -3,7 +3,6 @@
 namespace common\searchModels;
 
 use common\helpers\CasinoHelper;
-use shop\helpers\ProductHelper;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Casino;
@@ -19,7 +18,7 @@ class CasinoSearch extends Casino
     public function rules()
     {
         return [
-            [['id', 'country_id'], 'integer'],
+            [['id'], 'integer'],
             [['title', 'logo', 'background', 'website', 'description'], 'safe'],
         ];
     }
@@ -61,7 +60,6 @@ class CasinoSearch extends Casino
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'country_id' => $this->country_id,
         ]);
 
         $query->andFilterWhere(['ilike', 'title', $this->title])

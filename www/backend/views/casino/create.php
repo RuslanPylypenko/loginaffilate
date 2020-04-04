@@ -1,13 +1,20 @@
 <?php
 
+use backend\forms\CreateCasinoForm;
+use common\helpers\CountriesHelper;
+use common\helpers\Helper;
 use kartik\editors\Summernote;
 use kartik\file\FileInput;
+use kartik\form\ActiveField;
 use kartik\select2\Select2;
-use yii\bootstrap\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Html;
+use kartik\icons\FontAwesomeAsset;
+
+FontAwesomeAsset::register($this);
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Casino */
+/* @var $model CreateCasinoForm */
 
 $this->title = 'Создание казино';
 $this->params['breadcrumbs'][] = ['label' => 'Casinos', 'url' => ['index']];
@@ -29,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
                         <?php echo $form->field($model, 'description')->widget(Summernote::class, [
-                            'options' => ['placeholder' => 'Edit content here...', 'rows' => 2]
+                            'options' => ['placeholder' => '', 'rows' => 2]
                         ]); ?>
                     </div>
                 </div>
@@ -41,19 +48,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="panel panel-default">
                     <div class="panel-heading">Детали</div>
                     <div class="panel-body">
-                        <?= $form->field($model, 'website')->textInput(['maxlength' => true]) ?>
 
-                        <?php echo $form->field($model, 'country_ids')->widget(Select2::classname(), [
-                            'data' => ['0' => 'Украина', 1 => 'Польша', 3 => 'USA'],
+
+                        <?= $form->field($model, 'website', [
+                            'addon' => ['prepend' => ['content' => '<i class="fas fa-globe"></i>']]
+                        ])->textInput(['maxlength' => true]) ?>
+
+                        <?php echo $form->field($model, 'forbidden_countries')->widget(Select2::classname(), [
+                            'data' => CountriesHelper::loadCountries(),
                             'language' => 'ru',
-                            'options' => ['placeholder' => 'Select a countries ...',  'multiple' => true],
+                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
                             'pluginOptions' => [
                                 'allowClear' => true
                             ],
                         ]); ?>
 
                         <?php echo $form->field($model, 'year_of_creation')->widget(Select2::classname(), [
-                            'data' => ['2016' => 2016, '2017' => 2017, '2018' => 2018, '2019' => 2019, '2020' => 2020],
+                            'data' => Helper::getYearsArray(),
                             'language' => 'ru',
                             'options' => ['placeholder' => 'Выберите год...',],
                             'pluginOptions' => [
@@ -61,23 +72,20 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                         ]); ?>
 
-                        <?= $form->field($model, 'year_of_creation')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($model, 'min_deposit')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($model, 'min_output')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($model, 'restriction_limit')->textInput(['maxlength' => true]) ?>
+                        <?php echo $form->field($model, 'min_deposit', [
+                            'addon' => ['prepend' => ['content' => '$']]
+                        ]); ?>
 
-                        <?php echo $form->field($model, 'license_id')->widget(Select2::classname(), [
-                            'data' =>  ['1' => 'Лицензия 1', '2' => 'Лицензия 2', '3' => 'Лицензия 3'],
-                            'language' => 'ru',
-                            'options' => ['placeholder' => 'Выберите лицензию...',],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
+                        <?php echo $form->field($model, 'min_output', [
+                            'addon' => ['prepend' => ['content' => '$']]
                         ]); ?>
 
 
+                        <?= $form->field($model, 'restriction_limit')->textInput(['maxlength' => true]) ?>
+
+
                         <?php echo $form->field($model, 'provider_id')->widget(Select2::classname(), [
-                            'data' =>   ['1' => 'Провайдер 1', '2' => 'Провайдер 2', '3' => 'Провайдер 3'],
+                            'data' => ['1' => 'Провайдер 1', '2' => 'Провайдер 2', '3' => 'Провайдер 3'],
                             'language' => 'ru',
                             'options' => ['placeholder' => 'Выберите Провайдера...',],
                             'pluginOptions' => [
@@ -89,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php echo $form->field($model, 'currency_ids')->widget(Select2::classname(), [
                             'data' => ['1' => 'Валюта 1', '2' => 'Валюта 2', '3' => 'Валюта 3'],
                             'language' => 'ru',
-                            'options' => ['placeholder' => 'Select a currency ...',  'multiple' => true],
+                            'options' => ['placeholder' => 'Select a currency ...', 'multiple' => true],
                             'pluginOptions' => [
                                 'allowClear' => true
                             ],
@@ -127,6 +135,30 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'allowClear' => true
                             ],
                         ]); ?>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Лицензии</div>
+                    <div class="panel-body">
+                        <?php echo $form->field($model->licenses, 'existing')->widget(Select2::classname(), [
+                            'data' => $model->licenses->tagsList(),
+                            'language' => 'ru',
+                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+
+
+                        <?php echo $form->field($model->licenses, 'textNew', [
+                            'hintType' => ActiveField::HINT_SPECIAL,
+                            'hintSettings' => ['placement' => 'right', 'onLabelClick' => true, 'onLabelHover' => false]
+                        ])->textArea([
+                            'id' => 'address-input',
+                            'placeholder' => 'Введите название новой лицензии ...',
+                            'rows' => 4
+                        ])->hint('Введите название каждой новый лицензии с новой строчки '); ?>
+
                     </div>
                 </div>
             </div>

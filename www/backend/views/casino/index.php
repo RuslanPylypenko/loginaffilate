@@ -56,20 +56,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
             ],
 
-//            ['class' => 'yii\grid\ActionColumn',
-//                'contentOptions' => ['style' => 'width: 8.7%'],
-//                'visible' => Yii::$app->user->isGuest ? false : true,
-//                'template' => '{update} {activate}',
-//                'buttons' => [
-//                    'update' => function ($url, $model) {
-//                        $t = 'index.php?r=site/update&id=' . $model->id;
-//                        return Html::button('edit', ['value' => Url::to($t), 'class' => 'btn btn-default btn-xs']);
-//                    },
-//                    'activate' => function ($url, $model) {
-//                        return Html::a('activate', ['/casino/active', 'id' => $model->id], ['class' => 'btn btn-success btn-xs']);
-//                    },
-//                ],
-//            ],
+            ['class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width: 8.7%'],
+                'visible' => Yii::$app->user->isGuest ? false : true,
+                'template' => '{update} {activate} {delete}',
+                'buttons' => [
+                    'activate' => function ($url, Casino $model) {
+                        if($model->isActive()){
+                            return Html::a("<span class='glyphicon glyphicon-eye-close'></span>", ['draft', 'id' => $model->id], ['class' => 'btn btn-default btn-xs']);
+                        }else{
+                            return Html::a("<span class='glyphicon glyphicon-eye-open'></span>", ['activate', 'id' => $model->id], ['class' => 'btn btn-default btn-xs']);
+                        }
+
+                    },
+                ],
+            ],
         ],
     ]); ?>
 
