@@ -1,4 +1,5 @@
 <?php
+
 namespace common\helpers;
 
 use common\models\Casino;
@@ -42,4 +43,28 @@ class CasinoHelper
             'class' => $class,
         ]);
     }
+
+
+    public static function tagLabels(Casino $casino)
+    {
+        $status = self::statusLabel($casino->status);
+
+        $top = "";
+        if ($casino->is_top) {
+            $top = Html::tag('span', 'топ', [
+                'class' => 'label label-success',
+            ]);
+        }
+
+        $advert = "";
+        if ($casino->is_advert) {
+            $advert = Html::tag('span', 'реклама', [
+                'class' => 'label label-success',
+            ]);
+        }
+
+
+        return trim($status . " " . $top . " " . $advert);
+    }
+
 }

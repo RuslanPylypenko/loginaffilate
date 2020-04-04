@@ -41,6 +41,7 @@ class CasinoController extends Controller
                     'activate' => ['POST'],
                     'draft' => ['POST'],
                     'add-to-top-list' => ['POST'],
+                    'remove-from-top-list' => ['POST'],
                 ],
             ],
         ];
@@ -149,15 +150,23 @@ class CasinoController extends Controller
     }
 
 
-    /**
-     * @param integer $id
-     * @return mixed
-     */
     public function actionAddToTopList($id)
     {
         try {
             $this->casinoService->addToTopList($id);
             Yii::$app->session->setFlash('success', "Казино добавлено в топ");
+        } catch (\DomainException $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+        return $this->redirect(Yii::$app->request->referrer ?: (['view', 'id' => $id]));
+    }
+
+
+    public function actionRemoveFromTopList($id)
+    {
+        try {
+            $this->casinoService->removeFromTopList($id);
+            Yii::$app->session->setFlash('success', "Казино удалено из топ");
         } catch (\DomainException $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
         }

@@ -17,6 +17,7 @@ use yii\db\ActiveQuery;
  * @property string|null $background
  * @property string|null $website
  * @property string|null $description
+ * @property string|null $provider_id
  * @property string|null $url
  * @property int|null $status
  * @property int|null $created_at
@@ -24,6 +25,8 @@ use yii\db\ActiveQuery;
  * @property double rating
  * @property License[] $licenses
  * @property LicenseAssignments[] $licenseAssignments
+ * @property CurrenciesAssignments[] $currenciesAssignments
+ * @property int is_top
  */
 class Casino extends \yii\db\ActiveRecord
 {
@@ -39,12 +42,18 @@ class Casino extends \yii\db\ActiveRecord
     }
 
 
-    public static function create($title, $description, $website): self
+    public static function create(
+        $title,
+        $description,
+        $provider_id,
+        $website
+    ): self
     {
         $casino = new static();
         $casino->title = $title;
         $casino->website = $website;
         $casino->description = $description;
+        $casino->provider_id = $description;
         $casino->status = self::STATUS_DRAFT;
 
         return $casino;
@@ -76,7 +85,7 @@ class Casino extends \yii\db\ActiveRecord
             ],
             [
                 'class' => SaveRelationsBehavior::className(),
-                'relations' => ['licenseAssignments'],
+                'relations' => ['licenseAssignments', 'currenciesAssignments'],
             ],
         ];
     }
@@ -85,6 +94,11 @@ class Casino extends \yii\db\ActiveRecord
     public function isActive()
     {
         return $this->status == self::STATUS_ACTIVE;
+    }
+
+    public function isTop()
+    {
+        return $this->is_top == 1;
     }
 
 
@@ -124,6 +138,28 @@ class Casino extends \yii\db\ActiveRecord
         $this->rating = $rating;
     }
 
+    public function addToTopList()
+    {
+        if ($this->is_top == 1) {
+            throw new \DomainException('Казино уже добавлено в топ лист');
+        }
+
+        if (static::find()->where(['is_top' => 1])->count() >= Yii::$app->params['maxTopCasinoCount']) {
+            throw new \DomainException(
+                "Вы не можете добавить в топ больше чем " . Yii::$app->params['maxTopCasinoCount'] . ' казино.'
+            );
+        }
+
+        $this->is_top = 1;
+    }
+
+
+    public function removeFromTopList()
+    {
+        $this->is_top = 0;
+    }
+
+
     // Licenses
 
     public function assignLicense($id): void
@@ -157,6 +193,38 @@ class Casino extends \yii\db\ActiveRecord
     }
 
 
+    // Currencies
+
+    public function assignCurrency($id): void
+    {
+        $assignments = $this->currenciesAssignments;
+        foreach ($assignments as $assignment) {
+            if ($assignment->isForCurrency($id)) {
+                return;
+            }
+        }
+        $assignments[] = CurrenciesAssignments::create($id);
+        $this->currenciesAssignments = $assignments;
+    }
+
+    public function revokeCurrency($id): void
+    {
+        $assignments = $this->currenciesAssignments;
+        foreach ($assignments as $i => $assignment) {
+            if ($assignment->isForCurrency($id)) {
+                unset($assignments[$i]);
+                $this->currenciesAssignments = $assignments;
+                return;
+            }
+        }
+        throw new \DomainException('Assignment is not found.');
+    }
+
+    public function revokeCurrencies(): void
+    {
+        $this->currenciesAssignments = [];
+    }
+
 
     public function getLicenseAssignments(): ActiveQuery
     {
@@ -166,5 +234,15 @@ class Casino extends \yii\db\ActiveRecord
     public function getLicenses(): ActiveQuery
     {
         return $this->hasMany(License::class, ['id' => 'license_id'])->via('licenseAssignments');
+    }
+
+    public function getCurrenciesAssignments(): ActiveQuery
+    {
+        return $this->hasMany(CurrenciesAssignments::class, ['casino_id' => 'id']);
+    }
+
+    public function getCurrencies(): ActiveQuery
+    {
+        return $this->hasMany(Currency::class, ['id' => 'currency_id'])->via('currenciesAssignments');
     }
 }

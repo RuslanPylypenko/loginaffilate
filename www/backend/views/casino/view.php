@@ -27,12 +27,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= Html::a('Изменить рейтинг', ['update-rating', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
         <?= Html::a('Редактировать урл', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
-        <?= Html::a('Добавить в топ', ['add-to-top-list', 'id' => $model->id], [
-            'class' => 'btn btn-default',
-            'data' => [
-                'method' => 'post',
-            ],
-        ]) ?>
+
+        <?php if ($model->isTop()): ?>
+            <?= Html::a('Убрать из топ', ['remove-from-top-list', 'id' => $model->id], [
+                'class' => 'btn btn-default',
+                'data' => [
+                    'method' => 'post',
+                ],
+            ]) ?>
+        <?php else: ?>
+            <?= Html::a('Добавить в топ', ['add-to-top-list', 'id' => $model->id], [
+                'class' => 'btn btn-default',
+                'data' => [
+                    'method' => 'post',
+                ],
+            ]) ?>
+        <?php endif; ?>
+
+
         <?= Html::a('Бонусы казино', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
         <?= Html::a('Отзывы казино', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
         <?= Html::a('Метаданные казино', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>

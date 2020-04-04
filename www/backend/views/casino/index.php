@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel common\searchModels\CasinoSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Casinos';
+$this->title = 'Казино';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="casino-index">
@@ -48,10 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
             //'description:ntext',
 
             [
-                'attribute' => 'status',
-                'filter' => $searchModel->statusList(),
+                'contentOptions' => ['style' => 'width: 180px'],
+                'attribute' => 'Теги',
+                'filter' => false,
                 'value' => function (Casino $model) {
-                    return CasinoHelper::statusLabel($model->status);
+                    return CasinoHelper::tagLabels($model);
                 },
                 'format' => 'raw',
             ],
@@ -62,10 +63,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{update} {activate} {delete}',
                 'buttons' => [
                     'activate' => function ($url, Casino $model) {
-                        if($model->isActive()){
-                            return Html::a("<span class='glyphicon glyphicon-eye-close'></span>", ['draft', 'id' => $model->id], ['class' => 'btn btn-default btn-xs']);
-                        }else{
-                            return Html::a("<span class='glyphicon glyphicon-eye-open'></span>", ['activate', 'id' => $model->id], ['class' => 'btn btn-default btn-xs']);
+                        if ($model->isActive()) {
+                            return Html::a("<span class='glyphicon glyphicon-eye-close'></span>",
+                                [
+                                    'draft', 'id' => $model->id], [
+                                    'class' => 'btn btn-default btn-xs',
+                                    'data' => [
+                                        'method' => 'post',
+                                    ],
+                                ]);
+                        } else {
+                            return Html::a("<span class='glyphicon glyphicon-eye-open'></span>",
+                                [
+                                    'activate', 'id' => $model->id], [
+                                    'class' => 'btn btn-default btn-xs',
+                                    'data' => [
+                                        'method' => 'post',
+                                    ],
+                                ]);
                         }
 
                     },

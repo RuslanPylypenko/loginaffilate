@@ -31,13 +31,100 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Описание</div>
+                    <div class="panel-heading">Основное</div>
                     <div class="panel-body">
                         <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        <?php echo $form->field($model, 'description')->widget(Summernote::class, [
-                            'options' => ['placeholder' => '', 'rows' => 2]
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Валюты</div>
+                    <div class="panel-body">
+                        <?php echo $form->field($model->currencies, 'existing')->widget(Select2::classname(), [
+                            'data' => $model->currencies->currenciesList(),
+                            'language' => 'ru',
+                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
                         ]); ?>
+
+
+                        <?php echo $form->field($model->currencies, 'textNew', [
+                            'hintType' => ActiveField::HINT_SPECIAL,
+                            'hintSettings' => ['placement' => 'right', 'onLabelClick' => true, 'onLabelHover' => false]
+                        ])->textArea([
+                            'id' => 'address-input',
+                            'placeholder' => 'Введите название новой валюты ...',
+                            'rows' => 4
+                        ])->hint('Введите название каждой новый валюты с новой строчки '); ?>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Лицензии</div>
+                    <div class="panel-body">
+                        <?php echo $form->field($model->licenses, 'existing')->widget(Select2::classname(), [
+                            'data' => $model->licenses->tagsList(),
+                            'language' => 'ru',
+                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]); ?>
+
+
+                        <?php echo $form->field($model->licenses, 'textNew', [
+                            'hintType' => ActiveField::HINT_SPECIAL,
+                            'hintSettings' => ['placement' => 'right', 'onLabelClick' => true, 'onLabelHover' => false]
+                        ])->textArea([
+                            'id' => 'address-input',
+                            'placeholder' => 'Введите название новой лицензии ...',
+                            'rows' => 4
+                        ])->hint('Введите название каждой новый лицензии с новой строчки '); ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Методы депозита/вывода валюты</div>
+                    <div class="panel-body">
+                        <div class="col-sm-6">
+                            <?php echo $form->field($model, 'method_deposit_ids')->widget(Select2::classname(), [
+                                'data' => ['1' => 'Метод 1', '2' => 'Метод 2', '3' => 'Метод 3'],
+                                'language' => 'ru',
+                                'options' => [
+                                    'placeholder' => 'Select a deposite method ...',
+                                    'multiple' => true
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]); ?>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <?php echo $form->field($model, 'method_output_ids')->widget(Select2::classname(), [
+                                'data' => ['1' => 'Метод 1', '2' => 'Метод 2', '3' => 'Метод 3'],
+                                'language' => 'ru',
+                                'options' => ['placeholder' => 'Select a method output ...', 'multiple' => true],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]); ?>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -85,7 +172,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
                         <?php echo $form->field($model, 'provider_id')->widget(Select2::classname(), [
-                            'data' => ['1' => 'Провайдер 1', '2' => 'Провайдер 2', '3' => 'Провайдер 3'],
+                            'data' => $model->providerList(),
                             'language' => 'ru',
                             'options' => ['placeholder' => 'Выберите Провайдера...',],
                             'pluginOptions' => [
@@ -93,36 +180,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                         ]); ?>
 
-
-                        <?php echo $form->field($model, 'currency_ids')->widget(Select2::classname(), [
-                            'data' => ['1' => 'Валюта 1', '2' => 'Валюта 2', '3' => 'Валюта 3'],
-                            'language' => 'ru',
-                            'options' => ['placeholder' => 'Select a currency ...', 'multiple' => true],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
-
-                        <?php echo $form->field($model, 'method_output_ids')->widget(Select2::classname(), [
-                            'data' => ['1' => 'Метод 1', '2' => 'Метод 2', '3' => 'Метод 3'],
-                            'language' => 'ru',
-                            'options' => ['placeholder' => 'Select a method output ...', 'multiple' => true],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
-
-                        <?php echo $form->field($model, 'method_deposit_ids')->widget(Select2::classname(), [
-                            'data' => ['1' => 'Метод 1', '2' => 'Метод 2', '3' => 'Метод 3'],
-                            'language' => 'ru',
-                            'options' => [
-                                'placeholder' => 'Select a deposite method ...',
-                                'multiple' => true
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
 
                         <?php echo $form->field($model, 'language_ids')->widget(Select2::classname(), [
                             'data' => ['1' => 'Язык 1', '2' => 'Язык 2', '3' => 'Язык 3'],
@@ -137,30 +194,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]); ?>
                     </div>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">Лицензии</div>
-                    <div class="panel-body">
-                        <?php echo $form->field($model->licenses, 'existing')->widget(Select2::classname(), [
-                            'data' => $model->licenses->tagsList(),
-                            'language' => 'ru',
-                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
 
-
-                        <?php echo $form->field($model->licenses, 'textNew', [
-                            'hintType' => ActiveField::HINT_SPECIAL,
-                            'hintSettings' => ['placement' => 'right', 'onLabelClick' => true, 'onLabelHover' => false]
-                        ])->textArea([
-                            'id' => 'address-input',
-                            'placeholder' => 'Введите название новой лицензии ...',
-                            'rows' => 4
-                        ])->hint('Введите название каждой новый лицензии с новой строчки '); ?>
-
-                    </div>
-                </div>
             </div>
 
             <div class="col-sm-6">
@@ -179,6 +213,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
         </div>
+
+
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">Плюсы минусы</div>
@@ -191,6 +227,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="row">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">SEO</div>
+                <div class="panel-body">
+                    <?php echo $form->field($model, 'description')->widget(Summernote::class, [
+                        'options' => ['placeholder' => '', 'rows' => 2]
+                    ]); ?>
+                </div>
+            </div>
+
         </div>
 
 

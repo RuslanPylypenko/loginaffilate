@@ -42,6 +42,8 @@ class CasinoSearch extends Casino
     public function search($params)
     {
         $query = Casino::find();
+        $query->orderBy(['created_at' => SORT_DESC]);
+
 
         // add conditions that should always apply here
 

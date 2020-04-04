@@ -11,7 +11,7 @@ class CasinoRepository
      * @return Casino|null
      * @throws NotFoundHttpException
      */
-    public function get($id)
+    public function get($id): Casino
     {
         if (!$casino = Casino::findOne($id)) {
             throw new NotFoundHttpException('Casino is not found.');
