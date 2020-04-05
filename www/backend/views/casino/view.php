@@ -28,20 +28,22 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Изменить рейтинг', ['update-rating', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
         <?= Html::a('Редактировать урл', ['update-url', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
 
-        <?php if ($model->isTop()): ?>
-            <?= Html::a('Убрать из топ', ['remove-from-top-list', 'id' => $model->id], [
-                'class' => 'btn btn-default',
-                'data' => [
-                    'method' => 'post',
-                ],
-            ]) ?>
-        <?php else: ?>
-            <?= Html::a('Добавить в топ', ['add-to-top-list', 'id' => $model->id], [
-                'class' => 'btn btn-default',
-                'data' => [
-                    'method' => 'post',
-                ],
-            ]) ?>
+        <?php if ($model->isActive()): ?>
+            <?php if ($model->isTop()): ?>
+                <?= Html::a('Убрать из топ', ['top-casino/remove-from-top-list', 'id' => $model->id], [
+                    'class' => 'btn btn-default',
+                    'data' => [
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            <?php else: ?>
+                <?= Html::a('Добавить в топ', ['top-casino/add-to-top-list', 'id' => $model->id], [
+                    'class' => 'btn btn-default',
+                    'data' => [
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            <?php endif; ?>
         <?php endif; ?>
 
 

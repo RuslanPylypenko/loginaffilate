@@ -141,6 +141,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             'addon' => ['prepend' => ['content' => '<i class="fas fa-globe"></i>']]
                         ])->textInput(['maxlength' => true]) ?>
 
+                        <?= $form->field($model, 'website_options')
+                            ->checkboxList($model->loadWebsiteOptions(), ['inline'=>true]); ?>
+
                         <?php echo $form->field($model, 'forbidden_countries')->widget(Select2::classname(), [
                             'data' => CountriesHelper::loadCountries(),
                             'language' => 'ru',

@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Создать казино', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Топ казино', ['create'], ['class' => 'btn btn-default']) ?>
+        <?= Html::a('Топ казино', ['top-casino/index'], ['class' => 'btn btn-default']) ?>
         <?= Html::a('Реклама казино', ['create'], ['class' => 'btn btn-default']) ?>
         <?= Html::a('Переменная категория казино', ['create'], ['class' => 'btn btn-default']) ?>
         <?= Html::a('Детали казино', ['create'], ['class' => 'btn btn-default']) ?>

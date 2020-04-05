@@ -50,14 +50,14 @@ class CasinoHelper
         $status = self::statusLabel($casino->status);
 
         $top = "";
-        if ($casino->is_top) {
+        if ($casino->isTop()) {
             $top = Html::tag('span', 'топ', [
                 'class' => 'label label-success',
             ]);
         }
 
         $advert = "";
-        if ($casino->is_advert) {
+        if ($casino->isAdvert()) {
             $advert = Html::tag('span', 'реклама', [
                 'class' => 'label label-success',
             ]);

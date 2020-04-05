@@ -98,7 +98,12 @@ class Casino extends \yii\db\ActiveRecord
 
     public function isTop()
     {
-        return $this->is_top == 1;
+        return TopCasino::find()->where(['casino_id' => $this->id])->exists();
+    }
+
+    public function isAdvert()
+    {
+        return false;
     }
 
 
@@ -120,6 +125,11 @@ class Casino extends \yii\db\ActiveRecord
         if ($this->isDraft()) {
             throw new \DomainException('Casino is already draft.');
         }
+
+        if ($this->isTop()) {
+            throw new \DomainException('Чтобы скрыть казино, уберите его с топ');
+        }
+
         $this->status = self::STATUS_DRAFT;
     }
 
@@ -136,21 +146,6 @@ class Casino extends \yii\db\ActiveRecord
             throw new \DomainException('Недопустимое значение рейтинга');
         }
         $this->rating = $rating;
-    }
-
-    public function addToTopList()
-    {
-        if ($this->is_top == 1) {
-            throw new \DomainException('Казино уже добавлено в топ лист');
-        }
-
-        if (static::find()->where(['is_top' => 1])->count() >= Yii::$app->params['maxTopCasinoCount']) {
-            throw new \DomainException(
-                "Вы не можете добавить в топ больше чем " . Yii::$app->params['maxTopCasinoCount'] . ' казино.'
-            );
-        }
-
-        $this->is_top = 1;
     }
 
 
@@ -245,4 +240,6 @@ class Casino extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Currency::class, ['id' => 'currency_id'])->via('currenciesAssignments');
     }
+
+
 }

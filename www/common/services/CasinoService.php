@@ -8,25 +8,30 @@ use backend\forms\UpdateUrlForm;
 use common\models\Casino;
 use common\models\Currency;
 use common\models\License;
+use common\models\TopCasino;
 use common\repositories\CasinoRepository;
 use common\repositories\CurrencyRepository;
 use common\repositories\LicenseRepository;
+use common\repositories\TopCasinoRepository;
 
 class CasinoService
 {
     private $casinos;
+    private $topCasinos;
     private $licenses;
     private $currencies;
     private $transaction;
 
     public function __construct(
         CasinoRepository $casinos,
+        TopCasinoRepository $topCasinos,
         LicenseRepository $licenses,
         CurrencyRepository $currencies,
         TransactionManager $transaction
     )
     {
         $this->casinos = $casinos;
+        $this->topCasinos = $topCasinos;
         $this->licenses = $licenses;
         $this->currencies = $currencies;
         $this->transaction = $transaction;
@@ -111,15 +116,50 @@ class CasinoService
     public function addToTopList($id)
     {
         $casino = $this->casinos->get($id);
-        $casino->addToTopList();
-        $this->casinos->save($casino);
+        $topCasino = TopCasino::create($casino->id);
+        $topCasino->addToTopList($casino);
+        $this->topCasinos->save($topCasino);
     }
 
     public function removeFromTopList($id)
     {
-        $casino = $this->casinos->get($id);
-        $casino->removeFromTopList();
-        $this->casinos->save($casino);
+        $topCasino = $this->topCasinos->get($id);
+        $this->topCasinos->remove($topCasino);
+
+        $this->transaction->wrap(function () {
+            /** @var TopCasino[] $topCasinos */
+            $topCasinos = TopCasino::find()->all();
+            $ordCounter = 1;
+            foreach ($topCasinos as $topCasino) {
+                $topCasino->ord = $ordCounter;
+                $this->topCasinos->save($topCasino);
+                $ordCounter++;
+            }
+        });
+    }
+
+    public function moveUpInTop($casinoId)
+    {
+        $this->transaction->wrap(function () use ($casinoId) {
+            $currentTopCasino = $this->topCasinos->get($casinoId);
+            $currentTopCasino->moveUp();
+            $previousTopCasino = $this->topCasinos->getByOrd($currentTopCasino->ord);
+            $previousTopCasino->moveDown();
+            $this->topCasinos->save($currentTopCasino);
+            $this->topCasinos->save($previousTopCasino);
+        });
+    }
+
+    public function moveDownInTop($casinoId)
+    {
+        $this->transaction->wrap(function () use ($casinoId) {
+            $currentTopCasino = $this->topCasinos->get($casinoId);
+            $currentTopCasino->moveDown();
+            $previousTopCasino = $this->topCasinos->getByOrd($currentTopCasino->ord);
+            $previousTopCasino->moveUp();
+            $this->topCasinos->save($currentTopCasino);
+            $this->topCasinos->save($previousTopCasino);
+        });
     }
 
 }

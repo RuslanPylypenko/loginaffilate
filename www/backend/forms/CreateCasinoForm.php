@@ -29,6 +29,8 @@ class CreateCasinoForm extends CompositeForm
     public $method_deposit_ids;
     public $language_ids;
 
+    public $website_options;
+
     public function __construct($config = [])
     {
         $this->licenses = new LicensesForm();
@@ -53,6 +55,7 @@ class CreateCasinoForm extends CompositeForm
                 ],
                 'required'],
             ['website', 'url'],
+            ['website_options', 'safe'],
             [['min_deposit', 'min_output', 'restriction_limit'], 'double', 'min' => 0],
         ];
     }
@@ -74,6 +77,7 @@ class CreateCasinoForm extends CompositeForm
             'logo' => 'Лого',
             'background' => 'Подложка',
             'website' => 'Сайт казино',
+            'website_options' => 'Настройки ссылки',
             'description' => 'Описание',
             'status' => 'Статус',
             'url' => 'Ссылка',
@@ -86,6 +90,11 @@ class CreateCasinoForm extends CompositeForm
     public function providerList(): array
     {
         return ArrayHelper::map(Provider::find()->orderBy('name')->asArray()->all(), 'id', 'name');
+    }
+
+    public function loadWebsiteOptions(): array
+    {
+        return ['blank' => 'blank', 'dofollow' => 'dofollow'];
     }
 
     protected function internalForms(): array
