@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\CasinoHelper;
+use common\models\Casino;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -60,8 +61,33 @@ $this->params['breadcrumbs'][] = $this->title;
             'title',
             'url',
             'rating',
-            'logo',
-            'background',
+            [
+                'attribute' => 'Логотип прозрачный',
+                'format' => 'raw',
+                'value' => function (Casino $model) {
+                    return Html::img($model->getThumbFileUrl('logo_main', 'main'));
+                },
+            ],
+            [
+                'attribute' => 'Логотип маленький',
+                'format' => 'raw',
+                'value' => function (Casino $model) {
+                    return Html::img($model->getThumbFileUrl('logo_small', 'small'));
+                },
+            ],
+            [
+                'attribute' => 'background',
+                'format' => 'raw',
+                'value' => function (Casino $model) {
+                    return Html::a(
+                        Html::img($model->getThumbFileUrl('background', 'page')),
+                        $model->getThumbFileUrl('background', 'page'),
+                        ['class' => 'thumbnail', 'target' => '_blank']
+                    );
+                },
+            ],
+
+
             'website',
             'description:ntext',
             [

@@ -204,7 +204,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="panel panel-default">
                     <div class="panel-heading">Изображения</div>
                     <div class="panel-body">
-                        <?php echo $form->field($model, 'logo')->widget(FileInput::classname(), [
+                        <?php echo $form->field($model, 'logo_main')->widget(FileInput::classname(), [
+                            'options' => ['accept' => 'image/*'],
+                        ]); ?>
+                        <?php echo $form->field($model, 'logo_small')->widget(FileInput::classname(), [
                             'options' => ['accept' => 'image/*'],
                         ]); ?>
 

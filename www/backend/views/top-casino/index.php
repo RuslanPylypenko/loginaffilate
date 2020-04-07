@@ -101,7 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'delete' => function ($url, TopCasino $model) {
                         return Html::a("<span class='glyphicon glyphicon-trash'></span>",
                             [
-                                'casino/remove-from-top-list', 'id' => $model->casino_id], [
+                                'remove-from-top-list', 'id' => $model->casino_id], [
                                 'class' => 'btn btn-default btn-xs',
                                 'data' => [
                                     'method' => 'post',

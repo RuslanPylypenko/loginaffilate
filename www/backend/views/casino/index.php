@@ -43,13 +43,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'format' => 'raw',
             ],
-            'logo',
+            [
+                'contentOptions' => ['style' => 'width: 100px'],
+                'filter' => false,
+                'attribute' => 'Лого',
+                'value' => function (Casino $model) {
+                    return Html::a(
+                        Html::img($model->getThumbFileUrl('logo_small', 'small')),
+                        ['view', 'id' => $model->id],
+                        ['class' => 'thumbnail', 'target' => '_blank']
+                    );
+                },
+                'format' => 'raw',
+            ],
             //'website',
             //'description:ntext',
 
             [
                 'contentOptions' => ['style' => 'width: 180px'],
-                'attribute' => 'Теги',
+                'attribute' => 'Статус',
                 'filter' => false,
                 'value' => function (Casino $model) {
                     return CasinoHelper::tagLabels($model);

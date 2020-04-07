@@ -4,6 +4,7 @@
 namespace backend\forms;
 
 
+use common\helpers\StatusHelper;
 use common\models\Casino;
 use common\models\TopCasino;
 use Yii;
@@ -26,7 +27,7 @@ class TopCasinoForm extends Model
     {
         $countNewCasinos = count($this->casinoIds);
         $currentTopListCount = TopCasino::find()->count();
-        if(($countNewCasinos + $currentTopListCount) > Yii::$app->params['maxTopCasinoCount']){
+        if (($countNewCasinos + $currentTopListCount) > Yii::$app->params['maxTopCasinoCount']) {
             $this->addError($attribute, "Превышен лимит топ казино");
         }
 
@@ -43,7 +44,7 @@ class TopCasinoForm extends Model
     {
         $topCasinoQuery = TopCasino::find()->select('casino_id');
         return ArrayHelper::map(
-            Casino::find()->where(['not in', 'id', $topCasinoQuery])->orderBy('title')->asArray()->all(),
+            Casino::find()->where(['not in', 'id', $topCasinoQuery])->andWhere(['status' => StatusHelper::STATUS_ACTIVE])->orderBy('title')->asArray()->all(),
             'id',
             'title'
         );

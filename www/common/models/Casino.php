@@ -6,6 +6,8 @@ use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\web\UploadedFile;
+use yiidreamteam\upload\ImageUploadBehavior;
 
 /**
  * This is the model class for table "casinos".
@@ -13,9 +15,11 @@ use yii\db\ActiveQuery;
  * @property int $id
  * @property string|null $title
  * @property int|null $country_id
- * @property string|null $logo
+ * @property string|null $logo_main
+ * @property string|null $logo_small
  * @property string|null $background
  * @property string|null $website
+ * @property string|null $website_options
  * @property string|null $description
  * @property string|null $provider_id
  * @property string|null $url
@@ -46,14 +50,23 @@ class Casino extends \yii\db\ActiveRecord
         $title,
         $description,
         $provider_id,
-        $website
+        $website,
+        $website_options,
+        $background,
+        $logo_main,
+        $logo_small
     ): self
     {
         $casino = new static();
         $casino->title = $title;
         $casino->website = $website;
+        $casino->website_options = json_encode(['target' => '_blank']);
         $casino->description = $description;
-        $casino->provider_id = $description;
+        $casino->provider_id = $provider_id;
+        $casino->background = $background;
+        $casino->logo_main = $logo_main;
+        $casino->logo_small = $logo_small;
+        $casino->background = $background;
         $casino->status = self::STATUS_DRAFT;
 
         return $casino;
@@ -64,20 +77,55 @@ class Casino extends \yii\db\ActiveRecord
         return [
             'slug' => [
                 'class' => 'skeeks\yii2\slug\SlugBehavior',
-                'slugAttribute' => 'url',                    //The attribute to be generated
-                'attribute' => 'title',                          //The attribute from which will be generated
+                'slugAttribute' => 'url',
+                'attribute' => 'title',
                 // optional params
-                'maxLength' => 64,                              //Maximum length of attribute slug
-                'minLength' => 3,                               //Min length of attribute slug
+                'maxLength' => 64,
+                'minLength' => 3,
                 'ensureUnique' => true,
                 'slugifyOptions' => [
                     'lowercase' => true,
                     'separator' => '-',
                     'trim' => true
-                    //'regexp' => '/([^A-Za-z0-9]|-)+/',
-                    //'rulesets' => ['russian'],
-                    //@see all options https://github.com/cocur/slugify
                 ]
+            ],
+            [
+                'class' => ImageUploadBehavior::className(),
+                'attribute' => 'background',
+                'createThumbsOnRequest' => true,
+                'filePath' => '@frontend/web/uploads/casinos/[[attribute_id]]/[[background]].[[extension]]',
+                'fileUrl' => '@frontend/web/uploads/casinos/[[attribute_id]]/[[background]].[[extension]]',
+                'thumbPath' => '@frontend/web/cache/casinos/[[attribute_id]]/[[profile]]_[[background]].[[extension]]',
+                'thumbUrl' => '/cache/casinos/[[attribute_id]]/[[profile]]_[[background]].[[extension]]',
+                'thumbs' => [
+                    'page' => ['width' => 800, 'height' => 300],
+                ],
+            ],
+
+            [
+                'class' => ImageUploadBehavior::className(),
+                'attribute' => 'logo_main',
+                'createThumbsOnRequest' => true,
+                'filePath' => '@frontend/web/uploads/casinos/[[attribute_id]]/[[logo_main]].[[extension]]',
+                'fileUrl' => '@frontend/web/uploads/casinos/[[attribute_id]]/[[logo_main]].[[extension]]',
+                'thumbPath' => '@frontend/web/cache/casinos/[[attribute_id]]/[[profile]]_[[logo_main]].[[extension]]',
+                'thumbUrl' => '/cache/casinos/[[attribute_id]]/[[profile]]_[[logo_main]].[[extension]]',
+                'thumbs' => [
+                    'main' => ['width' => 180, 'height' => 180],
+                ],
+            ],
+
+            [
+                'class' => ImageUploadBehavior::className(),
+                'attribute' => 'logo_small',
+                'createThumbsOnRequest' => true,
+                'filePath' => '@frontend/web/uploads/casinos/[[attribute_id]]/[[logo_small]].[[extension]]',
+                'fileUrl' => '@frontend/web/uploads/casinos/[[attribute_id]]/[[logo_small]].[[extension]]',
+                'thumbPath' => '@frontend/web/cache/casinos/[[attribute_id]]/[[profile]]_[[logo_small]].[[extension]]',
+                'thumbUrl' => '/cache/casinos/[[attribute_id]]/[[profile]]_[[logo_small]].[[extension]]',
+                'thumbs' => [
+                    'small' => ['width' => 80, 'height' => 40],
+                ],
             ],
             [
                 'class' => TimestampBehavior::className(),
@@ -219,6 +267,7 @@ class Casino extends \yii\db\ActiveRecord
     {
         $this->currenciesAssignments = [];
     }
+
 
 
     public function getLicenseAssignments(): ActiveQuery

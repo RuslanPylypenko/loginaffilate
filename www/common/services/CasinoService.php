@@ -44,7 +44,11 @@ class CasinoService
             $form->title,
             $form->description,
             $form->provider_id,
-            $form->website
+            $form->website,
+            $form->website_options,
+            $form->background,
+            $form->logo_main,
+            $form->logo_small
         );
 
         foreach ($form->licenses->existing as $licenseId) {
@@ -79,7 +83,6 @@ class CasinoService
             }
             $this->currencies->save($currency);
         });
-
 
         return $casino;
     }

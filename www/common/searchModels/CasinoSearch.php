@@ -19,7 +19,7 @@ class CasinoSearch extends Casino
     {
         return [
             [['id'], 'integer'],
-            [['title', 'logo', 'background', 'website', 'description'], 'safe'],
+            [['title', 'background', 'website', 'description'], 'safe'],
         ];
     }
 
@@ -65,7 +65,6 @@ class CasinoSearch extends Casino
         ]);
 
         $query->andFilterWhere(['ilike', 'title', $this->title])
-            ->andFilterWhere(['ilike', 'logo', $this->logo])
             ->andFilterWhere(['ilike', 'background', $this->background])
             ->andFilterWhere(['ilike', 'website', $this->website])
             ->andFilterWhere(['ilike', 'description', $this->description]);
