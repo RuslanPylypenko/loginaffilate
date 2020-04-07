@@ -33,6 +33,7 @@ class CreateCasinoForm extends CompositeForm
     public $language_ids;
 
     public $website_options;
+    public $country_switch;
 
     public function __construct($config = [])
     {
@@ -126,7 +127,7 @@ class CreateCasinoForm extends CompositeForm
 
     public function loadWebsiteOptions(): array
     {
-        return ['blank' => 'blank', 'dofollow' => 'dofollow'];
+        return ['target' => '_blank', 'rel' => 'nofollow'];
     }
 
     protected function internalForms(): array

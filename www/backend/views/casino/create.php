@@ -8,6 +8,7 @@ use kartik\file\FileInput;
 use kartik\form\ActiveField;
 use kartik\select2\Select2;
 use kartik\form\ActiveForm;
+use kartik\switchinput\SwitchInput;
 use yii\helpers\Html;
 use kartik\icons\FontAwesomeAsset;
 
@@ -142,16 +143,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         ])->textInput(['maxlength' => true]) ?>
 
                         <?= $form->field($model, 'website_options')
-                            ->checkboxList($model->loadWebsiteOptions(), ['inline'=>true]); ?>
+                            ->checkboxList($model->loadWebsiteOptions(), ['inline' => true]); ?>
 
-                        <?php echo $form->field($model, 'forbidden_countries')->widget(Select2::classname(), [
-                            'data' => CountriesHelper::loadCountries(),
-                            'language' => 'ru',
-                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
 
                         <?php echo $form->field($model, 'year_of_creation')->widget(Select2::classname(), [
                             'data' => Helper::getYearsArray(),
@@ -195,6 +188,29 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'allowClear' => true
                             ],
                         ]); ?>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Страны
+                    </div>
+                    <div class="panel-body">
+
+                        <?php echo $form->field($model, 'country_switch')->widget(SwitchInput::classname(), [
+                            'pluginOptions' => [
+                                'onText'=>'Доступные',
+                                'offText'=>'Запрещенные'
+                            ]
+                        ])->label(false); ?>
+                        <?php echo $form->field($model, 'forbidden_countries')->widget(Select2::classname(), [
+                            'data' => CountriesHelper::loadCountries(),
+                            'language' => 'ru',
+                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ])->label(false); ?>
                     </div>
                 </div>
 

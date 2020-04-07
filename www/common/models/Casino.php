@@ -57,10 +57,15 @@ class Casino extends \yii\db\ActiveRecord
         $logo_small
     ): self
     {
+
         $casino = new static();
         $casino->title = $title;
         $casino->website = $website;
-        $casino->website_options = json_encode(['target' => '_blank']);
+        $casino->website_options = json_encode(array_map(function ($item){
+            if($item == 'target') return ['target' => 'blank'];
+            if($item == 'rel') return ['rel' => 'nofollow'];
+            return false;
+        }, $website_options));
         $casino->description = $description;
         $casino->provider_id = $provider_id;
         $casino->background = $background;
