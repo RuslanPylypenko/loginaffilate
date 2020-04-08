@@ -10,6 +10,7 @@ use yii\web\UploadedFile;
 
 /**
  * @property CurrenciesForm $currencies
+ * @property LanguagesForm $languages
  */
 class CreateCasinoForm extends CompositeForm
 {
@@ -29,7 +30,6 @@ class CreateCasinoForm extends CompositeForm
     public $provider_id;
     public $method_output_ids;
     public $method_deposit_ids;
-    public $language_ids;
     public $has_license;
 
     public $website_options;
@@ -38,6 +38,7 @@ class CreateCasinoForm extends CompositeForm
     public function __construct($config = [])
     {
         $this->currencies = new CurrenciesForm();
+        $this->languages = new LanguagesForm();
         parent::__construct($config);
     }
 
@@ -79,6 +80,7 @@ class CreateCasinoForm extends CompositeForm
     {
         return [
             'id' => 'ID',
+            'languages' => 'Языки',
             'title' => 'Название казино H1',
             'forbidden_countries' => 'Запрещенные страны',
             'year_of_creation' => 'Год создания казино',
@@ -133,6 +135,6 @@ class CreateCasinoForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['currencies'];
+        return ['currencies', 'languages'];
     }
 }

@@ -12,7 +12,7 @@ use common\models\TopCasino;
 use common\repositories\CasinoRepository;
 use common\repositories\CountryRepository;
 use common\repositories\CurrencyRepository;
-use common\repositories\LicenseRepository;
+use common\repositories\LanguageRepository;
 use common\repositories\TopCasinoRepository;
 use yii\helpers\ArrayHelper;
 
@@ -22,6 +22,7 @@ class CasinoService
     private $topCasinos;
     private $countries;
     private $currencies;
+    private $languages;
     private $transaction;
 
     public function __construct(
@@ -29,6 +30,7 @@ class CasinoService
         TopCasinoRepository $topCasinos,
         CountryRepository $countries,
         CurrencyRepository $currencies,
+        LanguageRepository $languages,
         TransactionManager $transaction
     )
     {
@@ -36,6 +38,7 @@ class CasinoService
         $this->topCasinos = $topCasinos;
         $this->countries = $countries;
         $this->currencies = $currencies;
+        $this->languages = $languages;
         $this->transaction = $transaction;
     }
 
@@ -97,6 +100,12 @@ class CasinoService
             }
             $this->currencies->save($currency);
         });
+
+
+        foreach ($form->languages->existing as $languageId) {
+            $language = $this->languages->get($languageId);
+            $casino->assignLanguage($language->id);
+        }
 
         return $casino;
     }

@@ -3,6 +3,7 @@
 
 namespace common\repositories;
 
+
 use common\models\Currency;
 use yii\web\NotFoundHttpException;
 
@@ -12,7 +13,7 @@ class CurrencyRepository
     public function get($currencyId)
     {
         if (!$currency = Currency::findOne($currencyId)) {
-            throw new NotFoundHttpException('License is not found.');
+            throw new NotFoundHttpException('Currency is not found.');
         }
         return $currency;
     }

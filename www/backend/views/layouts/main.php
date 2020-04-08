@@ -37,6 +37,10 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Главная', 'url' => ['/site/index']],
+        ['label' => 'Страны', 'url' => ['/currency/index']],
+        ['label' => 'Страны', 'url' => ['/countries/index']],
+        ['label' => 'Провайдеры', 'url' => ['/provider/index']],
+        ['label' => 'Языки', 'url' => ['/language/index']],
         ['label' => 'Казино', 'url' => ['/casino/index']],
         ['label' => 'Пользователи', 'url' => ['/user/index']],
     ];

@@ -31,6 +31,7 @@ use yiidreamteam\upload\ImageUploadBehavior;
  * @property int|null $has_license
  * @property ForbiddenCountriesAssignments[] $forbiddenCountriesAssignments
  * @property CurrenciesAssignments[] $currenciesAssignments
+ * @property LanguagesAssignments[] $languagesAssignments
  * @property int is_top
  */
 class Casino extends \yii\db\ActiveRecord
@@ -143,7 +144,7 @@ class Casino extends \yii\db\ActiveRecord
             ],
             [
                 'class' => SaveRelationsBehavior::className(),
-                'relations' => ['forbiddenCountriesAssignments', 'currenciesAssignments'],
+                'relations' => ['forbiddenCountriesAssignments', 'currenciesAssignments', 'languagesAssignments'],
             ],
         ];
     }
@@ -278,6 +279,40 @@ class Casino extends \yii\db\ActiveRecord
         $this->currenciesAssignments = [];
     }
 
+    // Languages
+
+    public function assignLanguage($id): void
+    {
+        $assignments = $this->languagesAssignments;
+        foreach ($assignments as $assignment) {
+            if ($assignment->isForLanguage($id)) {
+                return;
+            }
+        }
+        $assignments[] = LanguagesAssignments::create($id);
+        $this->languagesAssignments = $assignments;
+    }
+
+    public function revokeLanguage($id): void
+    {
+        $assignments = $this->languagesAssignments;
+        foreach ($assignments as $i => $assignment) {
+            if ($assignment->isForLanguage($id)) {
+                unset($assignments[$i]);
+                $this->languagesAssignments = $assignments;
+                return;
+            }
+        }
+        throw new \DomainException('Assignment is not found.');
+    }
+
+    public function revokeLanguages(): void
+    {
+        $this->languagesAssignments = [];
+    }
+
+
+
     public function getForbiddenCountriesAssignments(): ActiveQuery
     {
         return $this->hasMany(ForbiddenCountriesAssignments::class, ['casino_id' => 'id']);
@@ -293,6 +328,14 @@ class Casino extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Currency::class, ['id' => 'currency_id'])->via('currenciesAssignments');
     }
+
+    public function getLanguages(): ActiveQuery
+    {
+        return $this->hasMany(Currency::class, ['id' => 'language_id'])->via('languageAssignments');
+    }
+
+
+
 
 
 }

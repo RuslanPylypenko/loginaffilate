@@ -167,8 +167,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]); ?>
 
 
-                        <?php echo $form->field($model, 'language_ids')->widget(Select2::classname(), [
-                            'data' => ['1' => 'Язык 1', '2' => 'Язык 2', '3' => 'Язык 3'],
+                        <?php echo $form->field($model, 'languages')->widget(Select2::classname(), [
+                            'data' => $model->languages->languagesList(),
                             'language' => 'ru',
                             'options' => [
                                 'placeholder' => 'Select a language ...',
@@ -227,19 +227,19 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
 
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-heading">Плюсы минусы</div>
-                <div class="panel-body">
-                    <div class="col-sm-6">
-                        <?= $form->field($model, 'positive_options')->textarea(['rows' => 7]) ?>
-                    </div>
-                    <div class="col-sm-6">
-                        <?= $form->field($model, 'negative_options')->textarea(['rows' => 7]) ?>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div class="row">-->
+<!--            <div class="panel panel-default">-->
+<!--                <div class="panel-heading">Плюсы минусы</div>-->
+<!--                <div class="panel-body">-->
+<!--                    <div class="col-sm-6">-->
+<!--                        --><?php /////echo $form->field($model, 'positive_options')->textarea(['rows' => 7]) ?>
+<!--                    </div>-->
+<!--                    <div class="col-sm-6">-->
+<!--                        --><?php //// echo $form->field($model, 'negative_options')->textarea(['rows' => 7]) ?>
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
         <div class="row">
 
