@@ -27,8 +27,9 @@ use yiidreamteam\upload\ImageUploadBehavior;
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property double rating
- * @property License[] $licenses
- * @property LicenseAssignments[] $licenseAssignments
+ * @property Countries[] $forbidden_countries
+ * @property int|null $has_license
+ * @property ForbiddenCountriesAssignments[] $forbiddenCountriesAssignments
  * @property CurrenciesAssignments[] $currenciesAssignments
  * @property int is_top
  */
@@ -54,24 +55,28 @@ class Casino extends \yii\db\ActiveRecord
         $website_options,
         $background,
         $logo_main,
-        $logo_small
+        $logo_small,
+        $has_license
     ): self
     {
+
+        $website_options = is_array($website_options) ? array_map(function ($item) {
+            if ($item == 'target') return ['target' => 'blank'];
+            if ($item == 'rel') return ['rel' => 'nofollow'];
+            return false;
+        }, $website_options) : null;
 
         $casino = new static();
         $casino->title = $title;
         $casino->website = $website;
-        $casino->website_options = json_encode(array_map(function ($item){
-            if($item == 'target') return ['target' => 'blank'];
-            if($item == 'rel') return ['rel' => 'nofollow'];
-            return false;
-        }, $website_options));
+        $casino->website_options = json_encode($website_options);
         $casino->description = $description;
         $casino->provider_id = $provider_id;
         $casino->background = $background;
         $casino->logo_main = $logo_main;
         $casino->logo_small = $logo_small;
         $casino->background = $background;
+        $casino->has_license = $has_license;
         $casino->status = self::STATUS_DRAFT;
 
         return $casino;
@@ -138,7 +143,7 @@ class Casino extends \yii\db\ActiveRecord
             ],
             [
                 'class' => SaveRelationsBehavior::className(),
-                'relations' => ['licenseAssignments', 'currenciesAssignments'],
+                'relations' => ['forbiddenCountriesAssignments', 'currenciesAssignments'],
             ],
         ];
     }
@@ -208,36 +213,36 @@ class Casino extends \yii\db\ActiveRecord
     }
 
 
-    // Licenses
+    // ForbiddenCountries
 
-    public function assignLicense($id): void
+    public function assignForbiddenCountry($id): void
     {
-        $assignments = $this->licenseAssignments;
+        $assignments = $this->forbiddenCountriesAssignments;
         foreach ($assignments as $assignment) {
-            if ($assignment->isForLicense($id)) {
+            if ($assignment->isForCountry($id)) {
                 return;
             }
         }
-        $assignments[] = LicenseAssignments::create($id);
-        $this->licenseAssignments = $assignments;
+        $assignments[] = ForbiddenCountriesAssignments::create($id);
+        $this->forbiddenCountriesAssignments = $assignments;
     }
 
-    public function revokeLicense($id): void
+    public function revokeForbiddenCountry($id): void
     {
-        $assignments = $this->licenseAssignments;
+        $assignments = $this->forbiddenCountriesAssignments;
         foreach ($assignments as $i => $assignment) {
-            if ($assignment->isForLicense($id)) {
+            if ($assignment->isForCountry($id)) {
                 unset($assignments[$i]);
-                $this->licenseAssignments = $assignments;
+                $this->forbiddenCountriesAssignments = $assignments;
                 return;
             }
         }
         throw new \DomainException('Assignment is not found.');
     }
 
-    public function revokeLicenses(): void
+    public function revokeForbiddenCountries(): void
     {
-        $this->licenseAssignments = [];
+        $this->forbiddenCountriesAssignments = [];
     }
 
 
@@ -273,17 +278,11 @@ class Casino extends \yii\db\ActiveRecord
         $this->currenciesAssignments = [];
     }
 
-
-
-    public function getLicenseAssignments(): ActiveQuery
+    public function getForbiddenCountriesAssignments(): ActiveQuery
     {
-        return $this->hasMany(LicenseAssignments::class, ['casino_id' => 'id']);
+        return $this->hasMany(ForbiddenCountriesAssignments::class, ['casino_id' => 'id']);
     }
 
-    public function getLicenses(): ActiveQuery
-    {
-        return $this->hasMany(License::class, ['id' => 'license_id'])->via('licenseAssignments');
-    }
 
     public function getCurrenciesAssignments(): ActiveQuery
     {

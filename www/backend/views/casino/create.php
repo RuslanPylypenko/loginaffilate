@@ -69,26 +69,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="col-sm-6">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Лицензии</div>
+                    <div class="panel-heading"></div>
                     <div class="panel-body">
-                        <?php echo $form->field($model->licenses, 'existing')->widget(Select2::classname(), [
-                            'data' => $model->licenses->tagsList(),
-                            'language' => 'ru',
-                            'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]); ?>
-
-
-                        <?php echo $form->field($model->licenses, 'textNew', [
-                            'hintType' => ActiveField::HINT_SPECIAL,
-                            'hintSettings' => ['placement' => 'right', 'onLabelClick' => true, 'onLabelHover' => false]
-                        ])->textArea([
-                            'id' => 'address-input',
-                            'placeholder' => 'Введите название новой лицензии ...',
-                            'rows' => 4
-                        ])->hint('Введите название каждой новый лицензии с новой строчки '); ?>
 
                     </div>
                 </div>
@@ -144,6 +126,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= $form->field($model, 'website_options')
                             ->checkboxList($model->loadWebsiteOptions(), ['inline' => true]); ?>
+
+
+                        <?php echo $form->field($model, 'has_license')->widget(SwitchInput::classname(), [
+                            'pluginOptions' => [
+                                'onText'=>'Есть',
+                                'offText'=>'Нет'
+                            ]
+                        ]); ?>
 
 
                         <?php echo $form->field($model, 'year_of_creation')->widget(Select2::classname(), [

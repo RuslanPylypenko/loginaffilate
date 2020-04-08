@@ -9,7 +9,6 @@ use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 /**
- * @property LicensesForm $licenses
  * @property CurrenciesForm $currencies
  */
 class CreateCasinoForm extends CompositeForm
@@ -31,13 +30,13 @@ class CreateCasinoForm extends CompositeForm
     public $method_output_ids;
     public $method_deposit_ids;
     public $language_ids;
+    public $has_license;
 
     public $website_options;
     public $country_switch;
 
     public function __construct($config = [])
     {
-        $this->licenses = new LicensesForm();
         $this->currencies = new CurrenciesForm();
         parent::__construct($config);
     }
@@ -59,12 +58,13 @@ class CreateCasinoForm extends CompositeForm
                     'background',
                     'logo_main',
                     'logo_small',
+                    'forbidden_countries'
                 ],
                 'required'],
             ['title', 'trim'],
             ['title', 'uniqueTitle'],
             ['website', 'url'],
-            ['website_options', 'safe'],
+            [['website_options', 'country_switch', 'has_license'], 'safe'],
             [['min_deposit', 'min_output', 'restriction_limit'], 'double', 'min' => 0],
             ['background', 'image'],
             ['logo_main', 'image'],
@@ -92,6 +92,7 @@ class CreateCasinoForm extends CompositeForm
             'website' => 'Сайт казино',
             'website_options' => 'Настройки ссылки',
             'description' => 'Описание',
+            'has_license' => 'Лицензия',
             'status' => 'Статус',
             'url' => 'Ссылка',
             'rating' => 'Рейтинг',
@@ -132,6 +133,6 @@ class CreateCasinoForm extends CompositeForm
 
     protected function internalForms(): array
     {
-        return ['licenses', 'currencies'];
+        return ['currencies'];
     }
 }

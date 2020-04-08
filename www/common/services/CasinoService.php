@@ -6,33 +6,35 @@ use backend\forms\CreateCasinoForm;
 use backend\forms\SetRatingForm;
 use backend\forms\UpdateUrlForm;
 use common\models\Casino;
+use common\models\Countries;
 use common\models\Currency;
-use common\models\License;
 use common\models\TopCasino;
 use common\repositories\CasinoRepository;
+use common\repositories\CountryRepository;
 use common\repositories\CurrencyRepository;
 use common\repositories\LicenseRepository;
 use common\repositories\TopCasinoRepository;
+use yii\helpers\ArrayHelper;
 
 class CasinoService
 {
     private $casinos;
     private $topCasinos;
-    private $licenses;
+    private $countries;
     private $currencies;
     private $transaction;
 
     public function __construct(
         CasinoRepository $casinos,
         TopCasinoRepository $topCasinos,
-        LicenseRepository $licenses,
+        CountryRepository $countries,
         CurrencyRepository $currencies,
         TransactionManager $transaction
     )
     {
         $this->casinos = $casinos;
         $this->topCasinos = $topCasinos;
-        $this->licenses = $licenses;
+        $this->countries = $countries;
         $this->currencies = $currencies;
         $this->transaction = $transaction;
     }
@@ -48,24 +50,36 @@ class CasinoService
             $form->website_options,
             $form->background,
             $form->logo_main,
-            $form->logo_small
+            $form->logo_small,
+            $form->has_license
         );
 
-        foreach ($form->licenses->existing as $licenseId) {
-            $license = $this->licenses->get($licenseId);
-            $casino->assignLicense($license->id);
+        $forbiddenCountries = $form->forbidden_countries;
+
+        if ($form->country_switch == 1) {
+            $forbiddenCountries = $this->countries->getAllIdsWhereNotIn($forbiddenCountries);
         }
 
-        $this->transaction->wrap(function () use ($casino, $form) {
-            foreach ($form->licenses->newNames as $licenseName) {
-                if (!$license = $this->licenses->findByName($licenseName)) {
-                    $license = License::create($licenseName);
-                    $this->licenses->save($license);
-                }
-                $casino->assignLicense($license->id);
-            }
-            $this->licenses->save($license);
-        });
+        foreach ($forbiddenCountries as $countryId) {
+            $country = $this->countries->get($countryId);
+            $casino->assignForbiddenCountry($country->id);
+        }
+
+//        foreach ($form->licenses->existing as $licenseId) {
+//            $license = $this->licenses->get($licenseId);
+//            $casino->assignLicense($license->id);
+//        }
+//
+//        $this->transaction->wrap(function () use ($casino, $form) {
+//            foreach ($form->licenses->newNames as $licenseName) {
+//                if (!$license = $this->licenses->findByName($licenseName)) {
+//                    $license = License::create($licenseName);
+//                    $this->licenses->save($license);
+//                }
+//                $casino->assignLicense($license->id);
+//            }
+//            $this->licenses->save($license);
+//        });
 
 
         foreach ($form->currencies->existing as $currencyId) {
