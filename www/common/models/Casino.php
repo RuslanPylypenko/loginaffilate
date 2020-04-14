@@ -324,6 +324,11 @@ class Casino extends \yii\db\ActiveRecord
         return $this->hasMany(CurrenciesAssignments::class, ['casino_id' => 'id']);
     }
 
+    public function getLanguagesAssignments(): ActiveQuery
+    {
+        return $this->hasMany(LanguagesAssignments::class, ['language_id' => 'id']);
+    }
+
     public function getCurrencies(): ActiveQuery
     {
         return $this->hasMany(Currency::class, ['id' => 'currency_id'])->via('currenciesAssignments');

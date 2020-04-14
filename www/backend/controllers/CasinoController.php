@@ -82,9 +82,12 @@ class CasinoController extends Controller
     {
         $form = new CreateCasinoForm();
 
-        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+//        var_dump(Yii::$app->request->post());
+//        var_dump($form->load(Yii::$app->request->post()));
 
-           // var_dump($form); die();
+        if ($form->load(Yii::$app->request->post())) {
+
+          //var_dump($form); die();
 
             $casino = $this->casinoService->createCasino($form);
             $casino->save();

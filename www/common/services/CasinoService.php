@@ -85,24 +85,13 @@ class CasinoService
 //        });
 
 
-        foreach ($form->currencies->existing as $currencyId) {
+        foreach ($form->currencies as $currencyId) {
             $currency = $this->currencies->get($currencyId);
             $casino->assignCurrency($currency->id);
         }
 
-        $this->transaction->wrap(function () use ($casino, $form) {
-            foreach ($form->currencies->newNames as $currencyName) {
-                if (!$currency = $this->currencies->findByName($currencyName)) {
-                    $currency = Currency::create($currencyName);
-                    $this->currencies->save($currency);
-                }
-                $casino->assignCurrency($currency->id);
-            }
-            $this->currencies->save($currency);
-        });
 
-
-        foreach ($form->languages->existing as $languageId) {
+        foreach ($form->languages as $languageId) {
             $language = $this->languages->get($languageId);
             $casino->assignLanguage($language->id);
         }

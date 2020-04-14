@@ -4,7 +4,10 @@ namespace backend\forms;
 
 use common\forms\CompositeForm;
 use common\models\Casino;
+use common\models\Currency;
+use common\models\Language;
 use common\models\Provider;
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
@@ -12,7 +15,7 @@ use yii\web\UploadedFile;
  * @property CurrenciesForm $currencies
  * @property LanguagesForm $languages
  */
-class CreateCasinoForm extends CompositeForm
+class CreateCasinoForm extends Model
 {
     public $title;
     public $description;
@@ -31,15 +34,18 @@ class CreateCasinoForm extends CompositeForm
     public $method_output_ids;
     public $method_deposit_ids;
     public $has_license;
+    public $currencies;
+    public $languages;
 
     public $website_options;
     public $country_switch;
 
     public function __construct($config = [])
     {
-        $this->currencies = new CurrenciesForm();
-        $this->languages = new LanguagesForm();
         parent::__construct($config);
+//        $this->currencies = new CurrenciesForm();
+//        $this->languages = new LanguagesForm();
+
     }
 
 
@@ -58,6 +64,8 @@ class CreateCasinoForm extends CompositeForm
                     'provider_id',
                     'background',
                     'logo_main',
+                    'currencies',
+                    'languages',
                     'logo_small',
                     'forbidden_countries'
                 ],
@@ -81,6 +89,7 @@ class CreateCasinoForm extends CompositeForm
         return [
             'id' => 'ID',
             'languages' => 'Языки',
+            'currencies' => 'Валюты',
             'title' => 'Название казино H1',
             'forbidden_countries' => 'Запрещенные страны',
             'year_of_creation' => 'Год создания казино',
@@ -123,6 +132,11 @@ class CreateCasinoForm extends CompositeForm
         return false;
     }
 
+    public function currenciesList(): array
+    {
+        return ArrayHelper::map(Currency::find()->orderBy('name')->asArray()->all(), 'id', 'name');
+    }
+
     public function providerList(): array
     {
         return ArrayHelper::map(Provider::find()->orderBy('name')->asArray()->all(), 'id', 'name');
@@ -131,6 +145,11 @@ class CreateCasinoForm extends CompositeForm
     public function loadWebsiteOptions(): array
     {
         return ['target' => '_blank', 'rel' => 'nofollow'];
+    }
+
+    public function languagesList(): array
+    {
+        return ArrayHelper::map(Language::find()->orderBy('name')->asArray()->all(), 'id', 'name');
     }
 
     protected function internalForms(): array

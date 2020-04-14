@@ -45,8 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="panel panel-default">
                     <div class="panel-heading">Валюты</div>
                     <div class="panel-body">
-                        <?php echo $form->field($model->currencies, 'existing')->widget(Select2::classname(), [
-                            'data' => $model->currencies->currenciesList(),
+
+                        <?php echo $form->field($model, 'currencies')->widget(Select2::classname(), [
+                            'data' => $model->currenciesList(),
                             'language' => 'ru',
                             'options' => ['placeholder' => 'Выберите из списка ...', 'multiple' => true],
                             'pluginOptions' => [
@@ -54,15 +55,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                         ]); ?>
 
-
-                        <?php echo $form->field($model->currencies, 'textNew', [
-                            'hintType' => ActiveField::HINT_SPECIAL,
-                            'hintSettings' => ['placement' => 'right', 'onLabelClick' => true, 'onLabelHover' => false]
-                        ])->textArea([
-                            'id' => 'address-input',
-                            'placeholder' => 'Введите название новой валюты ...',
-                            'rows' => 4
-                        ])->hint('Введите название каждой новый валюты с новой строчки '); ?>
 
                     </div>
                 </div>
@@ -168,7 +160,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
                         <?php echo $form->field($model, 'languages')->widget(Select2::classname(), [
-                            'data' => $model->languages->languagesList(),
+                            'data' => $model->languagesList(),
                             'language' => 'ru',
                             'options' => [
                                 'placeholder' => 'Select a language ...',
