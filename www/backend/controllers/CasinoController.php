@@ -7,6 +7,7 @@ use backend\forms\SetRatingForm;
 use backend\forms\UpdateCasinoForm;
 use backend\forms\UpdateUrlForm;
 use common\services\CasinoService;
+use common\services\PageService;
 use Yii;
 use common\models\Casino;
 use common\searchModels\CasinoSearch;
@@ -20,12 +21,23 @@ use yii\filters\VerbFilter;
 class CasinoController extends Controller
 {
     private $casinoService;
+    /**
+     * @var PageService
+     */
+    private $pageService;
 
-    public function __construct($id, $module, CasinoService $casinoService, $config = [])
+    public function __construct(
+        $id,
+        $module,
+        CasinoService $casinoService,
+        PageService $pageService,
+        $config = []
+    )
     {
         parent::__construct($id, $module, $config);
 
         $this->casinoService = $casinoService;
+        $this->pageService = $pageService;
     }
 
     /**
@@ -82,15 +94,11 @@ class CasinoController extends Controller
     {
         $form = new CreateCasinoForm();
 
-//        var_dump(Yii::$app->request->post());
-//        var_dump($form->load(Yii::$app->request->post()));
-
         if ($form->load(Yii::$app->request->post())) {
-
-          //var_dump($form); die();
-
             $casino = $this->casinoService->createCasino($form);
             $casino->save();
+            $page = $this->pageService->createForCasino($casino);
+            $page->save();
             return $this->redirect(['view', 'id' => $casino->id]);
         }
 
