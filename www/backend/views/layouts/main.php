@@ -43,6 +43,7 @@ AppAsset::register($this);
         ['label' => 'Языки', 'url' => ['/language/index']],
         ['label' => 'Казино', 'url' => ['/casino/index']],
         ['label' => 'Пользователи', 'url' => ['/user/index']],
+        ['label' => 'Реклама', 'url' => ['/advertising']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];

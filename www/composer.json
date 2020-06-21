@@ -28,7 +28,8 @@
         "la-haute-societe/yii2-save-relations-behavior": "^1.2",
         "masterexploder/phpthumb" : "dev-master#9a58407dca8748c3a20bc8143db56aff357bdf91",
         "ext-json": "*",
-        "kartik-v/yii2-widget-switchinput": "dev-master"
+        "kartik-v/yii2-widget-switchinput": "dev-master",
+        "kartik-v/yii2-widget-datepicker": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

@@ -11,7 +11,10 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'name' => 'Adminpanel',
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'backend\bootstrap\SetUp',
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
