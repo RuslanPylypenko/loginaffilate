@@ -5,12 +5,18 @@ namespace common\repositories;
 
 
 use common\models\Advertising\Advertising;
+use common\models\Advertising\Banner;
 
 class AdvertisingRepository
 {
-    public function save(Advertising $advertising): void
+    public function saveAdvertising(Advertising $advertising): void
     {
         $advertising->save();
+    }
+
+    public function saveBanner(Banner $banner): void
+    {
+        $banner->save();
     }
 
 }

@@ -83,6 +83,7 @@ class CreateAdvertising extends Model
     public function load($data, $formName = null)
     {
         $loadSelf = parent::load($data, $formName);
+
         $loadTicker = true;
         if($this->_tickerAdvdert){
             $loadTicker = $this->_tickerAdvdert->load($data, $formName === null ? null : 'tickerAdvert');
@@ -120,7 +121,12 @@ class CreateAdvertising extends Model
             $validatePaid = $this->_paidAdvdert->validate(null, $clearErrors);
         }
 
-        return $validateSelf && $validateBanner && $validatePaid;
+        $validateFree = true;
+        if($this->_freeAdvdert){
+            $validateFree = $this->_freeAdvdert->validate(null, $clearErrors);
+        }
+
+        return $validateSelf && $validateBanner && $validatePaid && $validateFree;
     }
 
 

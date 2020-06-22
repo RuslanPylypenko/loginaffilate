@@ -6,6 +6,7 @@ namespace backend\bootstrap;
 use backend\services\advertising\AdvertCreateService;
 use backend\services\advertising\CreateBannerService;
 use common\repositories\AdvertisingRepository;
+use common\services\FileUploadService;
 use yii\base\BootstrapInterface;
 
 class SetUp implements BootstrapInterface
@@ -20,9 +21,9 @@ class SetUp implements BootstrapInterface
                 throw new \InvalidArgumentException('unknown advert type');
             }
             switch ($params['advertType']){
-                case 'banner': return new CreateBannerService(new AdvertisingRepository());
+                case 'banner': return new CreateBannerService(new AdvertisingRepository(), new FileUploadService());
             }
-            return false;
+            throw new \InvalidArgumentException('unknown advert type');
         });
 
     }

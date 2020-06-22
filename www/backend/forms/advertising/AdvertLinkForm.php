@@ -15,6 +15,7 @@ class AdvertLinkForm extends Model
     public function rules()
     {
         return [
+            [['options'], 'safe'],
             [['title', 'href'], 'required'],
         ];
     }
@@ -23,4 +24,11 @@ class AdvertLinkForm extends Model
     {
         return ['target' => '_blank', 'rel' => 'nofollow'];
     }
+
+
+    public function toJson(): string
+    {
+        return json_encode(['title' => $this->title, 'href' => $this->href, 'options' => ['target' => '_blank']]);
+    }
+
 }

@@ -11,13 +11,14 @@ use yii\db\ActiveRecord;
  * @property integer advertiser_id
  * @property string name
  * @property mixed date_start
- * @property mixed|n date_end
+ * @property mixed|null date_end
  * @property int paid_type
  * @property int|null price
  * @property int|null bonus
  * @property int|null budget
  * @property mixed created_at
  * @property mixed updated_at
+ * @property int id
  */
 class Advertising extends ActiveRecord
 {

@@ -11,7 +11,9 @@ use backend\forms\advertising\CreatePaidAdvertising;
 use backend\forms\advertising\CreateTickerAdvertising;
 use backend\services\advertising\AdvertCreateService;
 use InvalidArgumentException;
+use Yii;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 
 class AdvertisingController extends Controller
 {
@@ -53,10 +55,21 @@ class AdvertisingController extends Controller
             $model->assignTickerForm(new CreateTickerAdvertising());
         }
 
-        if($model->load(\Yii::$app->request->post()) && $model->validate()){
-            /** @var AdvertCreateService $service */
-            $service = \Yii::$container->get(AdvertCreateService::class, ['advertType' => $advertType]);
-            $service->create($model);
+        if($model->load(\Yii::$app->request->post())){;
+
+            if($advertType == 'banner'){
+                $model->getBannerAdvdert()->photo = UploadedFile::getInstance($model->getBannerAdvdert(), 'photo');
+            }
+
+            if($model->validate()){
+                /** @var AdvertCreateService $service */
+                $service = \Yii::$container->get(AdvertCreateService::class, ['advertType' => $advertType]);
+                $service->create($model);
+            }
+
+            Yii::$app->session->setFlash('success', 'Реклама успешно создана');
+
+            return $this->refresh();
         }
 
         return $this->render('forms/createAdvertising', [
