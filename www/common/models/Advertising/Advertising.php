@@ -23,6 +23,7 @@ use yii\db\ActiveRecord;
 class Advertising extends ActiveRecord
 {
     const STATUS_ACTIVE = 'active';
+    const STATUS_DISABLED = 'disabled';
 
     //Paid Type
     const FREE_PAID_TYPE = 1;
@@ -64,7 +65,8 @@ class Advertising extends ActiveRecord
         $dateStart,
         int $price,
         int $bonus,
-        int $budget
+        int $budget,
+        int $paidType
     ):self
     {
         $Advertising = new Advertising();
@@ -72,7 +74,7 @@ class Advertising extends ActiveRecord
         $Advertising->advertiser_id = $advertiserId;
         $Advertising->name = $name;
         $Advertising->date_start = $dateStart;
-        $Advertising->paid_type = self::FREE_PAID_TYPE;
+        $Advertising->paid_type = $paidType;
         $Advertising->price = $price;
         $Advertising->bonus = $bonus;
         $Advertising->budget = $budget;
@@ -85,6 +87,36 @@ class Advertising extends ActiveRecord
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE && $this->getDateStart()->getTimestamp() > time();
+    }
+
+    public function isRunOutOfTime(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE && $this->getDateStart() !== null && $this->getDateStart()->getTimestamp() < time();
+    }
+
+    public function isDisabled(): bool
+    {
+        return $this->status === self::STATUS_DISABLED;
+    }
+
+    public function isFree(): bool
+    {
+        return $this->paid_type === self::FREE_PAID_TYPE;
+    }
+
+    public function isClickPaid():bool
+    {
+        return $this->paid_type === self::CLICK_PAID_TYPE;
+    }
+
+    public function isViewPaid():bool
+    {
+        return $this->paid_type === self::VIEW_PAID_TYPE;
+    }
+
+    public function isPeriodPaid():bool
+    {
+        return $this->paid_type === self::PERIOD_PAID_TYPE;
     }
 
     /**
@@ -136,4 +168,11 @@ class Advertising extends ActiveRecord
     {
         return $this->budget;
     }
+
+    public function getProgress()
+    {
+        return random_int(1, 99);
+    }
+
+
 }

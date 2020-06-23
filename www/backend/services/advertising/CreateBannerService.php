@@ -52,7 +52,8 @@ class CreateBannerService implements AdvertCreateService
                     $form->dateStart,
                     (int)$paidForm->price,
                     (int)$paidForm->bonus,
-                    (int)$paidForm->budget
+                    (int)$paidForm->budget,
+                    $paidForm->paidType
                 );
             }
 

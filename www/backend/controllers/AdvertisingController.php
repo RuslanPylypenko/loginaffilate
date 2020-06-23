@@ -10,6 +10,7 @@ use backend\forms\advertising\CreateFreeAdvertising;
 use backend\forms\advertising\CreatePaidAdvertising;
 use backend\forms\advertising\CreateTickerAdvertising;
 use backend\services\advertising\AdvertCreateService;
+use common\models\Advertising\Banner;
 use InvalidArgumentException;
 use Yii;
 use yii\web\Controller;
@@ -24,7 +25,16 @@ class AdvertisingController extends Controller
 
     public function actionBanners()
     {
-        return $this->render('banners');
+        $banners = Banner::find()->all();
+
+        return $this->render('banners', ['banners' => $banners]);
+    }
+
+    public function actionBanner($id)
+    {
+        $banner = Banner::find()->where(['id' => $id])->one();
+
+        return $this->render('show_banner', ['banner' => $banner]);
     }
 
     public function actionTicker()

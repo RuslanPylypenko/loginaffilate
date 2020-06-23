@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property string photo
  * @property string link
  * @property int advert_id
+ * @property Advertising advertising
  */
 class Banner extends ActiveRecord
 {
@@ -43,6 +44,11 @@ class Banner extends ActiveRecord
 
     public function getLink(): AdvertisingLink
     {
-        return new AdvertisingLink('', '', []);
+        return new AdvertisingLink('default link', '#', []);
+    }
+
+    public function getAdvertising()
+    {
+        return $this->hasOne(Advertising::class, ['id' => 'advert_id']);
     }
 }
