@@ -15,6 +15,21 @@ class AdvertisingHelper
              return Html::tag('span', 'Отображается', ['class' => 'label label-success']);
         }
 
+        if ($advertising->isWait()) {
+            return Html::tag('span', 'Приостановлено', ['class' => 'label label-warning']);
+        }
+
+        if ($advertising->isOutOfFunds()) {
+            return Html::tag('span', 'Закончились средства', ['class' => 'label label-danger']);
+        }
+
+        if ($advertising->isFutureStart()) {
+            return Html::tag(
+                'span',
+                "Запуск планируется на " . \Yii::$app->formatter->asDatetime($advertising->date_start, 'short'),
+                    ['class' => 'label label-info']);
+        }
+
         if ($advertising->isDisabled()) {
             return Html::tag('span', 'Отключено', ['class' => 'label label-default']);
         }

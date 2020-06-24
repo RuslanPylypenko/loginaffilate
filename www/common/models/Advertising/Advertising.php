@@ -19,11 +19,13 @@ use yii\db\ActiveRecord;
  * @property mixed created_at
  * @property mixed updated_at
  * @property int id
+ * @property User advertiser
  */
 class Advertising extends ActiveRecord
 {
     const STATUS_ACTIVE = 'active';
     const STATUS_DISABLED = 'disabled';
+    const STATUS_WAIT = 'wait';
 
     //Paid Type
     const FREE_PAID_TYPE = 1;
@@ -67,7 +69,7 @@ class Advertising extends ActiveRecord
         int $bonus,
         int $budget,
         int $paidType
-    ):self
+    ): self
     {
         $Advertising = new Advertising();
         $Advertising->status = self::STATUS_ACTIVE;
@@ -86,12 +88,26 @@ class Advertising extends ActiveRecord
 
     public function isActive(): bool
     {
-        return $this->status === self::STATUS_ACTIVE && $this->getDateStart()->getTimestamp() > time();
+        return $this->status === self::STATUS_ACTIVE &&
+            $this->getDateStart()->getTimestamp() < time() &&
+            !$this->isOutOfFunds();
+    }
+
+    public function isWait(): bool
+    {
+        return $this->status === self::STATUS_WAIT;
+    }
+
+    public function isFutureStart(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE && time() < $this->getDateStart()->getTimestamp();
     }
 
     public function isRunOutOfTime(): bool
     {
-        return $this->status === self::STATUS_ACTIVE && $this->getDateStart() !== null && $this->getDateStart()->getTimestamp() < time();
+        return $this->status === self::STATUS_ACTIVE &&
+            $this->getDateStart() !== null &&
+            $this->getDateStart()->getTimestamp() > time();
     }
 
     public function isDisabled(): bool
@@ -104,17 +120,27 @@ class Advertising extends ActiveRecord
         return $this->paid_type === self::FREE_PAID_TYPE;
     }
 
-    public function isClickPaid():bool
+    public function isOutOfFunds(): bool
+    {
+        return !$this->isFree() && ($this->getLeftPaidActions() === 0);
+    }
+
+    public function getLeftPaidActions(): int
+    {
+        return floor($this->budget / $this->price) + $this->bonus;
+    }
+
+    public function isClickPaid(): bool
     {
         return $this->paid_type === self::CLICK_PAID_TYPE;
     }
 
-    public function isViewPaid():bool
+    public function isViewPaid(): bool
     {
         return $this->paid_type === self::VIEW_PAID_TYPE;
     }
 
-    public function isPeriodPaid():bool
+    public function isPeriodPaid(): bool
     {
         return $this->paid_type === self::PERIOD_PAID_TYPE;
     }
@@ -124,7 +150,7 @@ class Advertising extends ActiveRecord
      */
     public function getAdvertiser()
     {
-        return $this->hasOne(User::class, ['advertiser_id' => 'id']);
+        return $this->hasOne(User::class, ['id' => 'advertiser_id']);
     }
 
     public function getName(): string

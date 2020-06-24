@@ -2,6 +2,7 @@
 
 use backend\helpers\AdvertisingHelper;
 use backend\helpers\BannerHelper;
+use common\models\Advertising\Advertising;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\StringHelper;
@@ -22,6 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Создать баннер  <span class="glyphicon glyphicon-usd"></span>', ['create-advertising', 'paidType' => 'paid', 'advertType' => 'banner'], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Создать баннер (free)', ['create-advertising', 'paidType' => 'free', 'advertType' => 'banner'], ['class' => 'btn btn-info']) ?>
+        <span class="text-right">
+              <?= Html::a('Закрытые баннера', ['banners', 'status' => Advertising::STATUS_DISABLED], ['class' => 'btn btn-default']) ?>
+        </span>
     </p>
 
     <table class="table table-striped">

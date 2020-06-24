@@ -19,42 +19,85 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="container">
     <h2><?= $banner->advertising->getName() ?></h2>
 
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Общая информация <a href="#" class="btn btn-info"><span
+                                class="glyphicon glyphicon-edit"></span></a></div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tbody>
+                        <tr>
+                            <td><h4>Название</h4></td>
+                            <td><?= $banner->advertising->name ?></td>
+                        </tr>
+                        <tr>
+                            <td><h4>Рекламодатель</h4></td>
+                            <td><?= $banner->advertising->advertiser->username ?></td>
+                        </tr>
+                        <tr>
+                            <td><h4>Info</h4></td>
+                            <td>
+                                <?= AdvertisingHelper::getStatusBadge($banner->advertising) ?>
+                                <?= AdvertisingHelper::getPaymentTypeBadge($banner->advertising) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h4>Местоположение</h4></td>
+                            <td>
+                                <?= BannerHelper::getBlock($banner->block_id) ?>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h4>Дата начала рк</h4></td>
+                            <td>
+                                <?= Yii::$app->formatter->asDatetime($banner->advertising->date_start, 'long') ?>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Баннер</div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tbody>
+                        <tr>
+                            <td><h4>Фото</h4></td>
+                            <td><?= Html::img($banner->photo, ['class' => 'img-thumbnail', 'style' => 'width: 200px']) ?></td>
+                        </tr>
+                        <tr>
+                            <td><h4>Ссылка</h4></td>
+                            <td><?= $banner->getLink() ?></td>
+                        </tr>
+
+                        <tr>
+                            <td><h4>Местоположение</h4></td>
+                            <td>
+                                <?= BannerHelper::getBlock($banner->block_id) ?>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <?php if ($banner->advertising->isFree()): ?>
     <div class="panel panel-default">
-        <div class="panel-heading">Общая информация   <a href="#" class="btn btn-info"><span class="glyphicon glyphicon-edit"></span></a></div>
+        <div class="panel-heading">Дата окончания</div>
         <div class="panel-body">
             <table class="table table-striped">
                 <tbody>
                 <tr>
-                    <td><h4>Название</h4></td>
-                    <td><?= $banner->advertising->name ?></td>
-                </tr>
-                <tr>
-                    <td><h4>Ссылка</h4></td>
-                    <td><?= $banner->getLink() ?></td>
-                </tr>
-                <tr>
-                    <td><h4>Фото</h4></td>
-                    <td><?= Html::img($banner->photo, ['class' => 'img-thumbnail', 'style' => 'width: 200px']) ?></td>
-                </tr>
-                <tr>
-                    <td><h4>Info</h4></td>
-                    <td>
-                        <?= AdvertisingHelper::getStatusBadge($banner->advertising) ?>
-                        <?= AdvertisingHelper::getPaymentTypeBadge($banner->advertising) ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td><h4>Местоположение</h4></td>
-                    <td>
-                        <?= BannerHelper::getBlock($banner->block_id) ?>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td><h4>Дата начала рк</h4></td>
-                    <td>
-                        <?= Yii::$app->formatter->asDatetime($banner->advertising->date_start, 'long') ?>
-                    </td>
+                    <td><h4>Дата окончания</h4></td>
+                    <td><?= Yii::$app->formatter->asDatetime($banner->advertising->date_end, 'long') ?></td>
                 </tr>
                 <tr>
                     <td><h4>Прогресс</h4></td>
@@ -66,21 +109,6 @@ $this->params['breadcrumbs'][] = $this->title;
             </table>
         </div>
     </div>
-
-    <?php if ($banner->advertising->isFree()): ?>
-        <div class="panel panel-default">
-            <div class="panel-heading">Дата окончания</div>
-            <div class="panel-body">
-                <table class="table table-striped">
-                    <tbody>
-                    <tr>
-                        <td><h4>Дата окончания</h4></td>
-                        <td><?= Yii::$app->formatter->asDatetime($banner->advertising->date_end, 'long') ?></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     <?php else: ?>
     <div class="row">
         <div class="col-sm-8">
@@ -112,6 +140,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 77
                             </td>
                             <td></td>
+                        </tr>
+                        <tr>
+                            <td><h4>Прогресс</h4></td>
+                            <td>
+                                <?= AdvertisingHelper::getProgress($banner->advertising) ?>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -227,12 +261,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <?php if ($banner->advertising->isRunOutOfTime()): ?>
-        <a href="#" class="btn btn-info">Продлить</a>
-    <?php else: ?>
-        <a href="#" class="btn btn-danger">Закрыть рк</a>
-        <a href="#" class="btn btn-warning">Приостановить</a>
-    <?php endif; ?>
+
+    <a href="#" class="btn btn-danger">Закрыть рк</a>
+    <a href="#" class="btn btn-warning">Приостановить</a>
+    <a href="#" class="btn btn-info">Восстановить</a>
+
+
 
 
 </div>
