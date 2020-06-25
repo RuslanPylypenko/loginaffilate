@@ -45,7 +45,10 @@ $this->params['breadcrumbs'][] = $this->title;
         foreach ($banners as $banner): ?>
             <tr>
                 <td>
-                    <h4><?= $banner->advertising->getName() ?></h4></td>
+                    <a href="<?= Url::to(['/advertising/banner', 'id' => $banner->id]) ?>">
+                        <h4> <?= $banner->advertising->getName() ?></h4>
+                    </a>
+                </td>
                 <td>
                     <?= Html::img($banner->photo, ['class' => 'img-thumbnail', 'style' => 'width: 90px']) ?>
                 </td>

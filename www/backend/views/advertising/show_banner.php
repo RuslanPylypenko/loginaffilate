@@ -141,14 +141,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             </td>
                             <td></td>
                         </tr>
-                        <tr>
-                            <td><h4>Прогресс</h4></td>
-                            <td>
-                                <?= AdvertisingHelper::getProgress($banner->advertising) ?>
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
+                    <?= AdvertisingHelper::getProgress($banner->advertising) ?>
                 </div>
             </div>
         </div>
@@ -165,33 +160,18 @@ $this->params['breadcrumbs'][] = $this->title;
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Списание (клик)</td>
-                            <td>5</td>
-                            <td>5 июля 17:31</td>
-                        </tr>
-                        <tr>
-                            <td>Списание (клик)</td>
-                            <td>5</td>
-                            <td>5 июля 17:31</td>
-                        </tr>
-                        <tr>
-                            <td>Списание (клик)</td>
-                            <td>5</td>
-                            <td>5 июля 17:31</td>
-                        </tr>
-                        <tr>
-                            <td>Списание (клик)</td>
-                            <td>5</td>
-                            <td>5 июля 17:31</td>
-                        </tr>
-                        <tr>
-                            <td>Пополнение</td>
-                            <td>200</td>
-                            <td>5 мая 15:05</td>
-                        </tr>
+                        <?php /** @var \common\models\Advertising\AdvertisingStatistic $statistic */
+                        foreach ($banner->advertising->statistic as $statistic): ?>
+                            <tr>
+                                <td><?= $statistic->action ?></td>
+                                <td><?= $statistic->amount ?></td>
+                                <td><?= Yii::$app->formatter->asDatetime($statistic->created_at, 'short') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+
                         </tbody>
                     </table>
+                    <a href="#" class="btn-info btn">Подробнее</a>
                 </div>
             </div>
         </div>

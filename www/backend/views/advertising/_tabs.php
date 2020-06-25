@@ -14,7 +14,7 @@ $tabs = [
     ],
     'pop-ups' => [
         'href' => '#',
-        'title' => 'Боп-апы'
+        'title' => 'Pop-ups'
     ],
     'branding' => [
         'href' => '#',

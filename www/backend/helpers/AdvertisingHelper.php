@@ -12,7 +12,7 @@ class AdvertisingHelper
     public static function getStatusBadge(Advertising $advertising): ?string
     {
         if ($advertising->isActive()) {
-             return Html::tag('span', 'Отображается', ['class' => 'label label-success']);
+            return Html::tag('span', 'Отображается', ['class' => 'label label-success']);
         }
 
         if ($advertising->isWait()) {
@@ -27,7 +27,7 @@ class AdvertisingHelper
             return Html::tag(
                 'span',
                 "Запуск планируется на " . \Yii::$app->formatter->asDatetime($advertising->date_start, 'short'),
-                    ['class' => 'label label-info']);
+                ['class' => 'label label-info']);
         }
 
         if ($advertising->isDisabled()) {
@@ -44,33 +44,38 @@ class AdvertisingHelper
     public static function getProgress(Advertising $advertising): ?string
     {
         $progress = $advertising->getProgress();
-        if($advertising->isRunOutOfTime()){
+        if ($advertising->isRunOutOfTime() || $advertising->isOutOfFunds()) {
             $progress = 0;
         }
+        $class = 'progress-bar-info';
+        if ($progress < 20) {
+            $class = 'progress-bar-danger';
+        }
+        $activeClass = $advertising->isActive() ? 'active' : '';
         return '<div class="progress">
-                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="'.$progress.'"
-                    aria-valuemin="0" aria-valuemax="100" style="width:'.$progress.'%">
-                    '.$progress.'%
+                    <div class="progress-bar progress-bar-striped ' . $activeClass . ' ' . $class . '" role="progressbar" aria-valuenow="' . $progress . '"
+                    aria-valuemin="0" aria-valuemax="100" style="width:' . $progress . '%">
+                    ' . $progress . '%
                     </div>
             </div>';
     }
 
     public static function getPaymentTypeBadge(Advertising $advertising): ?string
     {
-        if($advertising->isFree()){
-            return Html::tag('span', 'free', ['class' => 'label label-info']);
+        if ($advertising->isFree()) {
+            return Html::tag('span', 'Бесплатная', ['class' => 'label label-info']);
         }
 
-        if($advertising->isClickPaid()){
-            return Html::tag('span', 'клик', ['class' => 'label label-info']);
+        if ($advertising->isClickPaid()) {
+            return Html::tag('span', 'За клики', ['class' => 'label label-info']);
         }
 
-        if($advertising->isPeriodPaid()){
-            return Html::tag('span', 'за время', ['class' => 'label label-info']);
+        if ($advertising->isPeriodPaid()) {
+            return Html::tag('span', 'За время', ['class' => 'label label-info']);
         }
 
-        if($advertising->isViewPaid()){
-            return Html::tag('span', 'просмотр', ['class' => 'label label-info']);
+        if ($advertising->isViewPaid()) {
+            return Html::tag('span', 'За просмотр', ['class' => 'label label-info']);
         }
 
         return null;

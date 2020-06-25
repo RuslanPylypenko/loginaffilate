@@ -20,6 +20,7 @@ use yii\db\ActiveRecord;
  * @property mixed updated_at
  * @property int id
  * @property User advertiser
+ * @property AdvertisingStatistic statistic
  */
 class Advertising extends ActiveRecord
 {
@@ -153,6 +154,11 @@ class Advertising extends ActiveRecord
         return $this->hasOne(User::class, ['id' => 'advertiser_id']);
     }
 
+    public function getStatistic()
+    {
+        return $this->hasMany(AdvertisingStatistic::class, ['advert_id' => 'id']);
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -198,6 +204,24 @@ class Advertising extends ActiveRecord
     public function getProgress()
     {
         return random_int(1, 99);
+    }
+
+    public function writeOffMoney($amount): void
+    {
+        if ($this->budget < $amount && $this->bonus <= 0) {
+            throw new \DomainException('insufficient funds');
+        }
+
+        if ($this->budget < $amount) {
+            $this->bonus -= 1;
+            return;
+        }
+        $this->budget -= $amount;
+    }
+
+    public function refillMoney($amount): void
+    {
+        $this->budget += $amount;
     }
 
 
