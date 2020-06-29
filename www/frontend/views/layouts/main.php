@@ -1,8 +1,10 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
+use frontend\widgets\advertising\BannerWidget;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -32,17 +34,18 @@ AppAsset::register($this);
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar-inverse',
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
+        ['label' => 'Главная', 'url' => ['/site/index']],
+        ['label' => 'Рейтинг казино', 'url' => ['/casinos/index']],
+        ['label' => 'Бонусы казино', 'url' => ['/bonuses/index']],
+        ['label' => 'Игровые автоматы', 'url' => ['/slots/index']],
     ];
     if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+        $menuItems[] = ['label' => 'Регистрация', 'url' => ['/site/signup']];
+        $menuItems[] = ['label' => 'Авторизация', 'url' => ['/site/login']];
     } else {
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
@@ -60,12 +63,33 @@ AppAsset::register($this);
     NavBar::end();
     ?>
 
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+    <div class="container-fluid">
+        <div class="col-sm-2">
+            <div class="well" style="height: 100vh">Реклама слева</div>
+        </div>
+
+        <div class="col-sm-8">
+
+            <div class="row">
+                <div class="well" style="height: 80px">Топ реклама</div>
+            </div>
+
+            <?= Breadcrumbs::widget([
+                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+            ]) ?>
+
+            <?= Alert::widget() ?>
+
+            <?= $content ?>
+        </div>
+
+        <div class="col-sm-2">
+            <div class="well" style="height: 100vh">Реклама справа</div>
+
+            <?php if (isset($this->blocks['filter'])): ?>
+                <?= $this->blocks['filter'] ?>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 
