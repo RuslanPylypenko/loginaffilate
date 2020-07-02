@@ -7,6 +7,9 @@ use backend\helpers\BannerHelper;
 use common\models\Advertising\Advertising;
 use common\models\Advertising\AdvertisingStatistic;
 use common\models\Advertising\Banner;
+use common\models\Category;
+use common\models\Pages\Page;
+use common\models\Pages\PageMeta;
 use common\models\User;
 use Faker\Factory;
 use Yii;
@@ -67,7 +70,6 @@ class SeedController extends Controller
         $Admin->status = User::STATUS_ACTIVE;
         $Admin->save();
     }
-
 
     public function actionBanners()
     {
@@ -161,5 +163,25 @@ class SeedController extends Controller
 
             $Banner->save();
         }
+    }
+
+    public function actionCategories()
+    {
+        Yii::$app->db->createCommand()->truncateTable(Category::tableName())->execute();
+
+        $Category = Category::create('casino');
+        $Category->save();
+
+        $Page = Page::create('/rating-casino/', $Category->id,'casino');
+        $Page->save();
+
+        $PageMeta = PageMeta::create(
+            $Page->id,
+            'Рейтинг казино',
+            'Рейтинг казино ....',
+            'Рейтинг казино Footer',
+            'Рейтинг казино Footer....'
+        );
+        $PageMeta->save();
     }
 }

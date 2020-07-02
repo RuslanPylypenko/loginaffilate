@@ -13,12 +13,23 @@ use yii\db\ActiveRecord;
  * @property string entity_type
  * @property mixed|null updated_at
  * @property mixed|null created_at
+ * @property mixed|null id
  */
 class Page extends ActiveRecord
 {
     const STATUS_ACTIVE = 1;
 
     const CASINO_TYPE = 'casino';
+
+    public static function create(string $url, int $entityId, string $entityType): self
+    {
+        $page = new self();
+        $page->status = self::STATUS_ACTIVE;
+        $page->url = $url;
+        $page->entity_id = $entityId;
+        $page->entity_type = $entityType;
+        return $page;
+    }
 
     public static function createForCasino(Casino $casino): self
     {
