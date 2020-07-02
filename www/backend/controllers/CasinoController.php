@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\forms\advertising\PageAdvertisingForm;
 use backend\forms\CreateCasinoForm;
 use backend\forms\SeoPageForm;
 use backend\forms\SetRatingForm;
@@ -221,6 +222,7 @@ class CasinoController extends Controller
 
     public function actionSeo()
     {
+        /** @var Category $Category */
         $Category = Category::find()->where(['slug' => Casino::CATEGORY_SLUG])->one();
 
         $model = new SeoPageForm();
@@ -229,6 +231,17 @@ class CasinoController extends Controller
         $this->view->params['breadcrumbs'][] = ['label' => 'Казино', 'url' => ['/casino/index']];
 
         return $this->render('/seo/form', [
+            'model' => $model,
+            'backUrl' => ['/casino/index']
+        ]);
+    }
+
+
+    public function actionAdvertising()
+    {
+        $model = new PageAdvertisingForm();
+
+        return $this->render('/advertising/forms/pages', [
             'model' => $model,
             'backUrl' => ['/casino/index']
         ]);
