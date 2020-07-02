@@ -3,11 +3,14 @@
 namespace backend\controllers;
 
 use backend\forms\CreateCasinoForm;
+use backend\forms\SeoPageForm;
 use backend\forms\SetRatingForm;
 use backend\forms\UpdateCasinoForm;
 use backend\forms\UpdateUrlForm;
+use common\models\Category;
 use common\services\CasinoService;
 use common\services\PageService;
+use http\Url;
 use Yii;
 use common\models\Casino;
 use common\searchModels\CasinoSearch;
@@ -212,6 +215,22 @@ class CasinoController extends Controller
         return $this->render('update-rating', [
             'updateRatingForm' => $updateRatingForm,
             'model' => $casino,
+        ]);
+    }
+
+
+    public function actionSeo()
+    {
+        $Category = Category::find()->where(['slug' => Casino::CATEGORY_SLUG])->one();
+
+        $model = new SeoPageForm();
+        $model->loadPage($Category);
+
+        $this->view->params['breadcrumbs'][] = ['label' => 'Казино', 'url' => ['/casino/index']];
+
+        return $this->render('/seo/form', [
+            'model' => $model,
+            'backUrl' => ['/casino/index']
         ]);
     }
 

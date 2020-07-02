@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property mixed|null updated_at
  * @property mixed|null created_at
  * @property mixed|null id
+ * @property PageMeta meta
  */
 class Page extends ActiveRecord
 {
@@ -59,5 +60,10 @@ class Page extends ActiveRecord
     public function getUrl(): string
     {
         return '/url/sad';
+    }
+
+    public function getMeta()
+    {
+        return $this->hasOne(PageMeta::class, ['page_id' => 'id']);
     }
 }
